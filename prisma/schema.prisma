@@ -1,0 +1,170 @@
+generator client {
+  provider = "prisma-client"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "sqlite"
+}
+
+model User {
+  id           Int       @id @default(autoincrement())
+  name         String
+  phone        String    @unique
+  email        String?   @unique
+  passwordHash String
+  role         String    @default("customer") // "customer" | "admin" | "driver"
+  loyaltyPoints Int      @default(0)
+  isOnline        Boolean @default(false)
+  vehicleType     String?
+  resetTokenHash    String?  // sha256 of the raw password-reset token (raw token is never stored)
+  resetTokenExpiry  DateTime?
+  tokenVersion      Int      @default(0) // bumped on password reset to invalidate existing JWTs
+  createdAt    DateTime  @default(now())
+  updatedAt    DateTime  @updatedAt
+
+  addresses       Address[]
+  orders          Order[]
+  wishlistItems   WishlistItem[]
+}
+
+model Address {
+  id           Int     @id @default(autoincrement())
+  userId       Int
+  label        String  @default("Home")
+  recipientName String
+  phone        String
+  addressLine  String
+  landmark     String?
+  latitude     Float?
+  longitude    Float?
+  isDefault    Boolean @default(false)
+
+  user User @relation(fields: [userId], references: [id])
+
+  @@index([userId])
+}
+
+model Category {
+  id     Int    @id @default(autoincrement())
+  slug   String @unique
+  name   String
+  image  String?
+  active Boolean @default(true)
+
+  products Product[]
+}
+
+model Product {
+  id            Int      @id @default(autoincrement())
+  sku           String   @unique
+  name          String
+  slug          String   @unique
+  categoryId    Int
+  brand         String?
+  unit          String   @default("1 pkt")
+  mrp           Float
+  price         Float
+  purchasePrice Float    @default(0)
+  stock         Int      @default(0)
+  image         String?
+  description   String?
+  batch         String?
+  supplier      String?
+  expiryDate    DateTime?
+  active        Boolean  @default(true)
+  featured      Boolean  @default(false)
+  bestSeller    Boolean  @default(false)
+  createdAt     DateTime @default(now())
+  updatedAt     DateTime @updatedAt
+
+  category     Category        @relation(fields: [categoryId], references: [id])
+  wishlistItems WishlistItem[]
+  orderItems    OrderItem[]
+
+  @@index([categoryId])
+  @@index([active])
+}
+
+model WishlistItem {
+  id        Int     @id @default(autoincrement())
+  userId    Int
+  productId Int
+
+  user    User    @relation(fields: [userId], references: [id])
+  product Product @relation(fields: [productId], references: [id])
+
+  @@unique([userId, productId])
+}
+
+model DeliveryZone {
+  id             Int    @id @default(autoincrement())
+  name           String
+  charge         Float
+  minOrderForFree Float // free delivery above this order amount
+  sortOrder      Int    @default(0)
+}
+
+model Coupon {
+  id          Int       @id @default(autoincrement())
+  code        String    @unique
+  type        String    @default("flat") // "flat" | "percent"
+  value       Float
+  minOrder    Float     @default(0)
+  maxDiscount Float?
+  active      Boolean   @default(true)
+  expiresAt   DateTime?
+  usageLimit  Int?
+  usedCount   Int       @default(0)
+  createdAt   DateTime  @default(now())
+}
+
+model Order {
+  id              Int      @id @default(autoincrement())
+  orderNumber     String   @unique
+  userId          Int?
+  customerName    String
+  customerPhone   String
+  deliveryLabel   String   @default("Home")
+  addressLine     String
+  landmark        String?
+  deliveryZoneName String?
+  deliveryFee     Float    @default(0)
+  itemsSubtotal   Float    @default(0)
+  discountAmount  Float    @default(0)
+  total           Float    @default(0)
+  paymentMethod   String   @default("cod") // "cod" | "qr" | "esewa"
+  paymentStatus   String   @default("pending") // "pending" | "paid"
+  paymentRef      String?  // eSewa transaction code / gateway reference
+  status          String   @default("pending") // pending | confirmed | packing | out_for_delivery | delivered | cancelled
+  notes           String?
+  assignedTo      String?
+  deliveryBoyId   Int?
+  deliveryOtp     String?
+  proofImage      String?
+  deliveryNotes   String?
+  createdAt       DateTime @default(now())
+  updatedAt       DateTime @updatedAt
+
+  user  User?        @relation(fields: [userId], references: [id])
+  items OrderItem[]
+
+  @@index([userId])
+  @@index([status])
+}
+
+model OrderItem {
+  id          Int    @id @default(autoincrement())
+  orderId     Int
+  productId   Int?
+  productName String
+  unit        String
+  price       Float
+  qty         Int
+  subtotal    Float
+
+  order   Order    @relation(fields: [orderId], references: [id])
+  product Product? @relation(fields: [productId], references: [id], onDelete: SetNull)
+
+  @@index([orderId])
+}
