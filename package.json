@@ -8,7 +8,7 @@
   "scripts": {
     "dev": "tsx watch src/server.ts",
     "start": "tsx src/server.ts",
-    "build": "prisma generate && npm --prefix client install && npm --prefix client run build",
+    "build": "npx prisma generate && npm --prefix client install && npm --prefix client run build",
     "typecheck": "tsc --noEmit",
     "test": "tsx --test tests/platform.test.ts",
     "db:push": "prisma db push",
