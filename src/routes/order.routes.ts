@@ -1,6 +1,6 @@
 import { Router } from "express";
 import { requireAuth } from "../middleware/auth";
-import { listOrdersForUser, getOrderForUser } from "../services/order.service";
+import { listOrdersForUser, getOrderForUser, deleteOrderForUser } from "../services/order.service";
 
 export const orderRouter = Router();
 
@@ -19,4 +19,15 @@ orderRouter.get("/:id", async (req, res) => {
     return;
   }
   res.json(order);
+});
+
+orderRouter.delete("/:id", async (req, res) => {
+  const userId = Number(res.locals.session?.sub);
+  const orderId = Number(req.params.id);
+  const result = await deleteOrderForUser(userId, orderId);
+  if (!result.ok) {
+    res.status(400).json(result);
+    return;
+  }
+  res.json(result);
 });

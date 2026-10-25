@@ -35,15 +35,15 @@ export default function Search() {
 
   return (
     <div className="mx-auto max-w-6xl px-4 py-8">
-      <h1 className="text-2xl font-bold text-gray-900">{title}</h1>
-      <p className="mt-1 text-sm text-gray-500">{list.length} products found</p>
+      <h1 className="text-3xl font-bold font-serif text-[#222222] tracking-tight">{title}</h1>
+      <p className="mt-1 text-sm text-[#666159]">{list.length} products found</p>
 
       {list.length === 0 ? (
-        <div className="mt-10 rounded-xl border border-dashed border-gray-300 bg-white p-10 text-center text-gray-500">
+        <div className="mt-10 rounded-xl border border-dashed border-[#EAE5D9] bg-white p-10 text-center text-[#666159] shadow-xs">
           No products found{search ? ` for "${search}"` : ""}. Try a different search.
         </div>
       ) : (
-        <div className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
+        <div className="mt-6 grid grid-cols-2 gap-3.5 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
           {list.map((p) => (
             <ProductCard key={p.id} product={p} />
           ))}

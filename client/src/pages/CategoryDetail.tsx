@@ -30,15 +30,15 @@ export default function CategoryDetail() {
 
   return (
     <div className="mx-auto max-w-6xl px-4 py-8">
-      <h1 className="text-2xl font-bold text-gray-900">{category.name}</h1>
-      <p className="mt-1 text-sm text-gray-500">{products.length} products — lower than retail prices</p>
+      <h1 className="text-3xl font-bold font-serif text-[#222222] tracking-tight">{category.name}</h1>
+      <p className="mt-1 text-sm text-[#666159]">{products.length} products — lower than retail prices</p>
 
       {products.length === 0 ? (
-        <div className="mt-10 rounded-xl border border-dashed border-gray-300 bg-white p-10 text-center text-gray-500">
+        <div className="mt-10 rounded-xl border border-dashed border-[#EAE5D9] bg-white p-10 text-center text-[#666159] shadow-xs">
           No products in this category yet. Check back soon.
         </div>
       ) : (
-        <div className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
+        <div className="mt-6 grid grid-cols-2 gap-3.5 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
           {products.map((p) => (
             <ProductCard key={p.id} product={p} />
           ))}

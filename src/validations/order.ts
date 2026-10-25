@@ -8,7 +8,7 @@ export const orderSchema = z.object({
   phone: z.string().optional(),
   addressLine: z.string().optional(),
   landmark: z.string().optional(),
-  paymentMethod: z.enum(["cod", "qr", "esewa"]),
+  paymentMethod: z.enum(["cod", "qr", "esewa", "khalti"]),
   couponCode: z.string().optional(),
   notes: z.string().optional(),
 });

@@ -3,13 +3,15 @@ import { Search, Truck, Wallet, BadgePercent } from "lucide-react";
 import type { FormEvent } from "react";
 import { ProductCard } from "@/components/ProductCard";
 import { Spinner, ErrorBox } from "@/components/Feedback";
-import { placeholderImage } from "@/lib/format";
+import { placeholderImage, formatNPR } from "@/lib/format";
 import { useAsync } from "@/hooks/useAsync";
+import { useStoreConfig } from "@/hooks/useStoreConfig";
 import { api } from "@/api/client";
 import type { HomeSections } from "@/types";
 
 export default function Home() {
   const navigate = useNavigate();
+  const { freeDeliveryThreshold } = useStoreConfig();
   const { data, error, loading } = useAsync<HomeSections>(() => api.get("/api/home"), []);
 
   if (loading) return <Spinner label="Loading store..." />;
@@ -30,81 +32,93 @@ export default function Home() {
   };
 
   return (
-    <div>
-      <section className="bg-gradient-to-br from-emerald-700 via-emerald-600 to-teal-600 text-white">
+    <div className="bg-[#FDFBF7] min-h-screen">
+      <section className="bg-gradient-to-br from-[#1D4028] via-[#2C5E3B] to-[#254F32] text-white">
         <div className="mx-auto max-w-6xl px-4 py-12 text-center">
-          <h1 className="text-3xl font-extrabold sm:text-4xl">
+          <span className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-white/15 backdrop-blur-md text-[#EAA844] text-xs font-bold uppercase tracking-wider mb-3.5 border border-white/15">
+            <Truck className="h-3.5 w-3.5" /> Birgunj Doorstep Delivery
+          </span>
+          <h1 className="text-3xl font-extrabold sm:text-4xl lg:text-5xl tracking-tight font-serif text-white">
             घरमै किराना, पसलभन्दा सस्तो मूल्यमा।
           </h1>
-          <p className="mt-2 text-emerald-100">
-            Buy groceries online in Birgunj — lower prices than your local shop, delivered same day.
+          <p className="mt-3 text-[#D2CBBF] max-w-2xl mx-auto text-sm sm:text-base font-sans">
+            Buy fresh groceries online in Birgunj — lower prices than local shops, delivered same day to your doorstep.
           </p>
-          <form onSubmit={onSubmit} className="mx-auto mt-6 flex max-w-xl items-center gap-2 rounded-full bg-white p-1.5">
-            <Search className="ml-3 h-5 w-5 text-gray-400" />
+          <form onSubmit={onSubmit} className="mx-auto mt-6 flex max-w-xl items-center gap-2 rounded-xl bg-white p-1.5 shadow-artisanal border border-[#EAE5D9]">
+            <Search className="ml-3 h-5 w-5 text-[#8E887E]" />
             <input
               name="q"
-              placeholder="Search rice, dal, oil, sugar..."
-              className="w-full bg-transparent text-gray-800 outline-none"
+              placeholder="Search rice, dal, mustard oil, spices... / चामल, दाल खोज्नुहोस्"
+              className="w-full bg-transparent text-[#222222] outline-none text-sm placeholder:text-[#8E887E]"
             />
-            <button className="rounded-full bg-emerald-700 px-5 py-2 text-sm font-semibold text-white" type="submit">
+            <button className="rounded-xl bg-[#C86D51] hover:bg-[#B55B3F] px-6 py-2.5 text-sm font-bold text-white shadow-xs transition-all" type="submit">
               Search
             </button>
           </form>
 
+          {/* Hero Banner Visual */}
+          <div className="mx-auto mt-8 max-w-3xl overflow-hidden rounded-xl shadow-artisanal border border-white/20">
+            <img
+              src="/hero-web-landscape.jpg"
+              alt="Gharmai Kirana Fresh Groceries Delivered to Doorstep"
+              className="w-full h-auto object-cover max-h-[360px]"
+            />
+          </div>
+
           <div className="mx-auto mt-8 grid max-w-3xl grid-cols-1 gap-3 text-left sm:grid-cols-3">
-            <div className="flex items-center gap-3 rounded-xl bg-white/10 px-4 py-3">
-              <Truck className="h-6 w-6 shrink-0" />
+            <div className="flex items-center gap-3 rounded-xl bg-white/10 backdrop-blur-xs px-4 py-3 border border-white/10">
+              <Truck className="h-6 w-6 shrink-0 text-[#EAA844]" />
               <div className="text-sm">
-                <p className="font-semibold">Fast Delivery</p>
-                <p className="text-emerald-100">Same / next day in Birgunj. Free above Rs. 5,000</p>
+                <p className="font-semibold text-white">Fast Delivery</p>
+                <p className="text-[#D2CBBF] text-xs">Same day in Birgunj • Free above {formatNPR(freeDeliveryThreshold)}</p>
               </div>
             </div>
-            <div className="flex items-center gap-3 rounded-xl bg-white/10 px-4 py-3">
-              <BadgePercent className="h-6 w-6 shrink-0" />
+            <div className="flex items-center gap-3 rounded-xl bg-white/10 backdrop-blur-xs px-4 py-3 border border-white/10">
+              <BadgePercent className="h-6 w-6 shrink-0 text-[#EAA844]" />
               <div className="text-sm">
-                <p className="font-semibold">Lower Prices</p>
-                <p className="text-emerald-100">See MRP, our price &amp; what you save</p>
+                <p className="font-semibold text-white">Lower Prices</p>
+                <p className="text-[#D2CBBF] text-xs">See MRP, our price &amp; what you save</p>
               </div>
             </div>
-            <div className="flex items-center gap-3 rounded-xl bg-white/10 px-4 py-3">
-              <Wallet className="h-6 w-6 shrink-0" />
+            <div className="flex items-center gap-3 rounded-xl bg-white/10 backdrop-blur-xs px-4 py-3 border border-white/10">
+              <Wallet className="h-6 w-6 shrink-0 text-[#EAA844]" />
               <div className="text-sm">
-                <p className="font-semibold">COD + QR</p>
-                <p className="text-emerald-100">Cash on delivery or eSewa / Khalti</p>
+                <p className="font-semibold text-white">COD + QR</p>
+                <p className="text-[#D2CBBF] text-xs">Cash on delivery or eSewa / Khalti</p>
               </div>
             </div>
           </div>
         </div>
       </section>
 
-      <section className="mx-auto max-w-6xl px-4 pt-10">
-        <h2 className="mb-4 text-xl font-bold text-gray-900">Shop by Category</h2>
-        <div className="grid grid-cols-3 gap-3 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-8">
+      <section className="mx-auto max-w-6xl px-4 pt-12">
+        <h2 className="mb-5 text-2xl font-bold font-serif text-[#222222] tracking-tight">Shop by Category</h2>
+        <div className="grid grid-cols-3 gap-3.5 sm:grid-cols-4 md:grid-cols-6 lg:grid-cols-8">
           {categories.map((c, i) => (
             <Link
               key={c.id}
               to={`/category/${c.slug}`}
-              className="flex flex-col items-center gap-2 rounded-xl border border-gray-200 bg-white p-3 text-center hover:shadow-md"
+              className="group flex flex-col items-center gap-2 rounded-xl border border-[#EAE5D9] bg-white p-3 text-center shadow-artisanal hover:shadow-artisanal-hover hover:border-[#C86D51]/50 transition-all"
             >
               <img
                 src={c.image || placeholderImage(c.name, i)}
                 alt={c.name}
-                className="h-14 w-14 rounded-full object-cover"
+                className="h-14 w-14 rounded-lg object-cover transition-transform duration-200 group-hover:scale-105"
               />
-              <span className="text-xs font-medium text-gray-700">{c.name}</span>
+              <span className="text-xs font-semibold text-[#222222] group-hover:text-[#2C5E3B] transition-colors">{c.name}</span>
             </Link>
           ))}
         </div>
       </section>
 
       <section className="mx-auto max-w-6xl px-4 pt-10">
-        <div className="rounded-2xl border border-emerald-200 bg-emerald-50 px-5 py-4 text-center text-sm font-medium text-emerald-900">
-          🚚 Free delivery on orders above Rs. 5,000 within Birgunj — cash on delivery available.
+        <div className="rounded-xl border border-[#C4D6CC] bg-[#EFF5F2] px-5 py-4 text-center text-sm font-semibold text-[#2C5E3B] shadow-xs">
+          🚚 Free delivery on orders above {formatNPR(freeDeliveryThreshold)} within Birgunj — cash on delivery available.
         </div>
       </section>
 
       <Section title="Today's Deals" href="/search?deals=1">
-        <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
+        <div className="grid grid-cols-2 gap-3.5 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
           {deals.map((p) => (
             <ProductCard key={p.id} product={p} />
           ))}
@@ -112,7 +126,7 @@ export default function Home() {
       </Section>
 
       <Section title="Best Sellers" href="/search?sort=popular">
-        <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
+        <div className="grid grid-cols-2 gap-3.5 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-5">
           {bestSellers.map((p) => (
             <ProductCard key={p.id} product={p} />
           ))}
@@ -120,7 +134,7 @@ export default function Home() {
       </Section>
 
       <Section title="Combo & Featured Offers" href="/search">
-        <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-4">
+        <div className="grid grid-cols-2 gap-3.5 sm:grid-cols-3 md:grid-cols-4 lg:grid-cols-4">
           {combos.map((p) => (
             <ProductCard key={p.id} product={p} />
           ))}
@@ -140,10 +154,10 @@ function Section({
   children: React.ReactNode;
 }) {
   return (
-    <section className="mx-auto max-w-6xl px-4 pt-10">
-      <div className="mb-4 flex items-center justify-between">
-        <h2 className="text-xl font-bold text-gray-900">{title}</h2>
-        <Link to={href} className="text-sm font-semibold text-emerald-700 hover:underline">
+    <section className="mx-auto max-w-6xl px-4 pt-12">
+      <div className="mb-5 flex items-center justify-between">
+        <h2 className="text-2xl font-bold font-serif text-[#222222] tracking-tight">{title}</h2>
+        <Link to={href} className="text-sm font-semibold text-[#C86D51] hover:text-[#B55B3F] hover:underline transition-colors">
           View all →
         </Link>
       </div>

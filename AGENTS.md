@@ -1,9 +1,20 @@
-<!-- BEGIN:nextjs-agent-rules -->
+# Gharmai Kirana — Project Architecture & Rules
 
-# This is NOT the Next.js you know
+## 1. System Overview
+- **Backend API**: Node.js / Express 5 with TypeScript (`online groshries/src/server.ts`).
+- **Database**: Hosted PostgreSQL on **Supabase** via **Prisma ORM 7** with `@prisma/adapter-pg` connection pooling.
+- **Web Client**: React 19 + TypeScript + Vite SPA (`online groshries/client`). Built to `client/dist` and statically served by Express in production.
+- **Mobile Client**: React Native 0.86 + Expo 57 (`online groshries mobile app/mobile`). Communicates with Express API over HTTP.
 
-This version has breaking changes — APIs, conventions, and file structure may all differ from your training data. Read the relevant guide in `node_modules/next/dist/docs/` (resolved from this file's directory; in monorepos the `next` package may not be visible from the repo root) before writing any code. Heed deprecation notices.
+## 2. Key Directories
+- `online groshries/src`: Express API routes, services, middleware, validations, and Prisma client.
+- `online groshries/prisma`: Schema definition (`schema.prisma`) and seed scripts.
+- `online groshries/client`: React Vite SPA for customer web store and store admin portal.
+- `online groshries mobile app/mobile`: Expo React Native cross-platform mobile app.
+- `online groshries/legacy`: Archived historical Next.js 15 pages kept for design and logic reference.
 
-This block is written and re-added by `next dev` — verify at `node_modules/next/dist/server/lib/generate-agent-files.js`. Removing it from a diff only re-creates the uncommitted change; committing it with your work keeps the tree clean.
-
-<!-- END:nextjs-agent-rules -->
+## 3. Database Commands
+- Schema push to Supabase: `npm run db:push`
+- Prisma Client generation: `npm run db:generate`
+- Seed store data: `npm run db:seed`
+- Test suite: `npm test`

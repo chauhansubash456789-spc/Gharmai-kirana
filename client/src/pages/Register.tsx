@@ -42,36 +42,36 @@ export default function Register() {
 
   return (
     <div className="mx-auto max-w-md px-4 py-12">
-      <div className="rounded-2xl border border-gray-200 bg-white p-6">
-        <h1 className="text-2xl font-bold text-gray-900">Create Account</h1>
-        <p className="mt-1 text-sm text-gray-500">Order groceries and get first-order offers.</p>
+      <div className="rounded-xl border border-[#EAE5D9] bg-white p-7 shadow-artisanal">
+        <h1 className="text-2xl font-bold font-serif text-[#222222] tracking-tight">Create Account</h1>
+        <p className="mt-1 text-sm text-[#666159]">Order groceries and get first-order offers.</p>
 
         <form onSubmit={onSubmit} className="mt-6 space-y-4">
           <div>
-            <label className="text-sm font-medium text-gray-700">Full name</label>
+            <label className="text-sm font-medium text-[#222222]">Full name</label>
             <input
               name="name"
               placeholder="e.g. Sunil Mahato"
               value={name}
               onChange={(e) => setName(e.target.value)}
-              className="mt-1 w-full rounded-lg border border-gray-300 px-3 py-2.5 text-sm outline-none focus:border-emerald-600"
+              className="mt-1 w-full rounded-xl border border-[#EAE5D9] px-3.5 py-2.5 text-sm text-[#222222] outline-none focus:border-[#C86D51] transition-colors"
             />
             <FieldError errors={fieldErrors.name} />
           </div>
           <div>
-            <label className="text-sm font-medium text-gray-700">Mobile number</label>
+            <label className="text-sm font-medium text-[#222222]">Mobile number</label>
             <input
               name="phone"
               type="tel"
               placeholder="98XXXXXXXX"
               value={phone}
               onChange={(e) => setPhone(e.target.value)}
-              className="mt-1 w-full rounded-lg border border-gray-300 px-3 py-2.5 text-sm outline-none focus:border-emerald-600"
+              className="mt-1 w-full rounded-xl border border-[#EAE5D9] px-3.5 py-2.5 text-sm text-[#222222] outline-none focus:border-[#C86D51] transition-colors"
             />
             <FieldError errors={fieldErrors.phone} />
           </div>
           <div>
-            <label className="text-sm font-medium text-gray-700">Email address</label>
+            <label className="text-sm font-medium text-[#222222]">Email address</label>
             <input
               name="email"
               type="email"
@@ -79,39 +79,39 @@ export default function Register() {
               placeholder="you@example.com"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="mt-1 w-full rounded-lg border border-gray-300 px-3 py-2.5 text-sm outline-none focus:border-emerald-600"
+              className="mt-1 w-full rounded-xl border border-[#EAE5D9] px-3.5 py-2.5 text-sm text-[#222222] outline-none focus:border-[#C86D51] transition-colors"
             />
             <FieldError errors={fieldErrors.email} />
           </div>
           <div>
-            <label className="text-sm font-medium text-gray-700">Password</label>
+            <label className="text-sm font-medium text-[#222222]">Password</label>
             <input
               name="password"
               type="password"
               placeholder="Minimum 6 characters"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="mt-1 w-full rounded-lg border border-gray-300 px-3 py-2.5 text-sm outline-none focus:border-emerald-600"
+              className="mt-1 w-full rounded-xl border border-[#EAE5D9] px-3.5 py-2.5 text-sm text-[#222222] outline-none focus:border-[#C86D51] transition-colors"
             />
             <FieldError errors={fieldErrors.password} />
           </div>
 
           {error && (
-            <div className="rounded-lg bg-red-50 px-3 py-2 text-sm font-medium text-red-600">{error}</div>
+            <div className="rounded-xl bg-[#F9ECE8] border border-[#F2D0C7] px-3.5 py-2 text-sm font-medium text-[#C86D51]">{error}</div>
           )}
 
           <button
             disabled={pending}
             type="submit"
-            className="w-full rounded-lg bg-emerald-600 py-3 font-semibold text-white hover:bg-emerald-700 disabled:opacity-60"
+            className="w-full rounded-xl bg-[#C86D51] py-3 font-bold text-white shadow-xs hover:bg-[#B55B3F] disabled:opacity-60 transition-all"
           >
             {pending ? "Creating..." : "Create Account"}
           </button>
         </form>
 
-        <p className="mt-4 text-center text-sm text-gray-500">
+        <p className="mt-5 text-center text-sm text-[#666159]">
           Already have an account?{" "}
-          <Link to="/login" className="font-semibold text-emerald-700 hover:underline">
+          <Link to="/login" className="font-semibold text-[#C86D51] hover:underline">
             Login
           </Link>
         </p>

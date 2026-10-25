@@ -2,6 +2,14 @@ import type { NextFunction, Request, Response } from "express";
 import { prisma } from "../lib/prisma";
 import { SESSION_COOKIE_NAME, verifySessionToken, type SessionPayload } from "../lib/session";
 
+function extractToken(req: Request): string | undefined {
+  const authHeader = req.headers.authorization;
+  if (authHeader && authHeader.startsWith("Bearer ")) {
+    return authHeader.slice(7).trim();
+  }
+  return req.cookies?.[SESSION_COOKIE_NAME];
+}
+
 async function resolveSession(token: string | undefined): Promise<SessionPayload | null> {
   if (!token) return null;
   const payload = await verifySessionToken(token);
@@ -12,12 +20,12 @@ async function resolveSession(token: string | undefined): Promise<SessionPayload
 }
 
 export async function optionalSession(req: Request, res: Response, next: NextFunction) {
-  res.locals.session = await resolveSession(req.cookies?.[SESSION_COOKIE_NAME]);
+  res.locals.session = await resolveSession(extractToken(req));
   next();
 }
 
 export async function requireAuth(req: Request, res: Response, next: NextFunction) {
-  const session = await resolveSession(req.cookies?.[SESSION_COOKIE_NAME]);
+  const session = await resolveSession(extractToken(req));
   if (!session) {
     res.status(401).json({ error: "Please login to continue." });
     return;
@@ -27,7 +35,7 @@ export async function requireAuth(req: Request, res: Response, next: NextFunctio
 }
 
 export async function requireAdmin(req: Request, res: Response, next: NextFunction) {
-  const session = await resolveSession(req.cookies?.[SESSION_COOKIE_NAME]);
+  const session = await resolveSession(extractToken(req));
   if (!session) {
     res.status(401).json({ error: "Please login to continue." });
     return;
@@ -41,7 +49,7 @@ export async function requireAdmin(req: Request, res: Response, next: NextFuncti
 }
 
 export async function requireDriver(req: Request, res: Response, next: NextFunction) {
-  const session = await resolveSession(req.cookies?.[SESSION_COOKIE_NAME]);
+  const session = await resolveSession(extractToken(req));
   if (!session) {
     res.status(401).json({ error: "Please login to continue." });
     return;

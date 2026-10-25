@@ -4,7 +4,7 @@ generator client {
 }
 
 datasource db {
-  provider = "sqlite"
+  provider = "postgresql"
 }
 
 model User {
@@ -167,4 +167,10 @@ model OrderItem {
   product Product? @relation(fields: [productId], references: [id], onDelete: SetNull)
 
   @@index([orderId])
+}
+
+model StoreSetting {
+  key       String   @id
+  value     String
+  updatedAt DateTime @default(now()) @updatedAt
 }

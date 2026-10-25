@@ -36,12 +36,12 @@ export default function ResetPassword() {
   if (done) {
     return (
       <div className="mx-auto max-w-md px-4 py-12">
-        <div className="rounded-2xl border border-gray-200 bg-white p-6 text-center">
-          <h1 className="text-2xl font-bold text-emerald-700">Password updated</h1>
-          <p className="mt-2 text-sm text-gray-500">Your password has been reset. You can now login with your new password.</p>
+        <div className="rounded-xl border border-[#EAE5D9] bg-white p-8 text-center shadow-artisanal">
+          <h1 className="font-serif text-2xl font-bold text-[#2C5E3B]">Password updated</h1>
+          <p className="mt-2 text-sm text-[#666159]">Your password has been reset. You can now login with your new password.</p>
           <Link
             to="/login"
-            className="mt-6 inline-block w-full rounded-lg bg-emerald-600 py-3 text-center font-semibold text-white hover:bg-emerald-700"
+            className="mt-6 inline-block w-full rounded-xl bg-[#C86D51] py-3 text-center font-semibold text-white shadow-sm hover:bg-[#B55B3F] transition-colors"
           >
             Go to login
           </Link>
@@ -52,40 +52,40 @@ export default function ResetPassword() {
 
   return (
     <div className="mx-auto max-w-md px-4 py-12">
-      <div className="rounded-2xl border border-gray-200 bg-white p-6">
-        <h1 className="text-2xl font-bold text-gray-900">Set a new password</h1>
-        <p className="mt-1 text-sm text-gray-500">Choose a new password for your account.</p>
+      <div className="rounded-xl border border-[#EAE5D9] bg-white p-8 shadow-artisanal">
+        <h1 className="font-serif text-2xl font-bold text-[#222222]">Set a new password</h1>
+        <p className="mt-1 text-sm text-[#666159]">Choose a new password for your account.</p>
 
         <form onSubmit={onSubmit} className="mt-6 space-y-4">
           <div>
-            <label className="text-sm font-medium text-gray-700">New password</label>
+            <label className="text-sm font-medium text-[#222222]">New password</label>
             <input
               name="newPassword"
               type="password"
               placeholder="Minimum 6 characters"
               value={newPassword}
               onChange={(e) => setNewPassword(e.target.value)}
-              className="mt-1 w-full rounded-lg border border-gray-300 px-3 py-2.5 text-sm outline-none focus:border-emerald-600"
+              className="mt-1 w-full rounded-xl border border-[#EAE5D9] bg-white px-3 py-2.5 text-sm text-[#222222] placeholder:text-[#8E887E] outline-none focus:border-[#C86D51] focus:ring-1 focus:ring-[#C86D51]"
             />
           </div>
           <div>
-            <label className="text-sm font-medium text-gray-700">Confirm new password</label>
+            <label className="text-sm font-medium text-[#222222]">Confirm new password</label>
             <input
               name="confirm"
               type="password"
               placeholder="Re-enter password"
               value={confirm}
               onChange={(e) => setConfirm(e.target.value)}
-              className="mt-1 w-full rounded-lg border border-gray-300 px-3 py-2.5 text-sm outline-none focus:border-emerald-600"
+              className="mt-1 w-full rounded-xl border border-[#EAE5D9] bg-white px-3 py-2.5 text-sm text-[#222222] placeholder:text-[#8E887E] outline-none focus:border-[#C86D51] focus:ring-1 focus:ring-[#C86D51]"
             />
           </div>
 
-          {error && <div className="rounded-lg bg-red-50 px-3 py-2 text-sm font-medium text-red-600">{error}</div>}
+          {error && <div className="rounded-xl bg-red-50 px-3 py-2 text-sm font-medium text-red-600 border border-red-200">{error}</div>}
 
           <button
             disabled={pending}
             type="submit"
-            className="w-full rounded-lg bg-emerald-600 py-3 font-semibold text-white hover:bg-emerald-700 disabled:opacity-60"
+            className="w-full rounded-xl bg-[#C86D51] py-3 font-semibold text-white shadow-sm hover:bg-[#B55B3F] transition-colors disabled:opacity-60"
           >
             {pending ? "Updating..." : "Update password"}
           </button>

@@ -33,6 +33,7 @@ import AdminZones from "@/pages/admin/AdminZones";
 import AdminCategories from "@/pages/admin/AdminCategories";
 import AdminCoupons from "@/pages/admin/AdminCoupons";
 import AdminDrivers from "@/pages/admin/AdminDrivers";
+import AdminSettings from "@/pages/admin/AdminSettings";
 import DriverDashboard from "@/pages/driver/DriverDashboard";
 import DriverHistory from "@/pages/driver/DriverHistory";
 
@@ -155,6 +156,7 @@ export default function App() {
         <Route path="categories" element={<AdminCategories />} />
         <Route path="coupons" element={<AdminCoupons />} />
         <Route path="drivers" element={<AdminDrivers />} />
+        <Route path="settings" element={<AdminSettings />} />
       </Route>
 
       <Route path="/payment/success" element={<PaymentSuccess />} />

@@ -1,13 +1,15 @@
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { Minus, Plus, Trash2, ShoppingCart, ArrowRight } from "lucide-react";
+import { Minus, Plus, Trash2, ShoppingCart, ArrowRight, Truck } from "lucide-react";
 import { useCart } from "@/context/CartContext";
 import { api } from "@/api/client";
 import { formatNPR, placeholderImage } from "@/lib/format";
+import { useStoreConfig } from "@/hooks/useStoreConfig";
 import type { PreviewLine } from "@/types";
 
 export default function Cart() {
   const { items, setQty, remove } = useCart();
+  const { freeDeliveryThreshold } = useStoreConfig();
   const [lines, setLines] = useState<PreviewLine[]>([]);
   const [loading, setLoading] = useState(true);
 
@@ -36,18 +38,20 @@ export default function Cart() {
   }, [items]);
 
   if (loading) {
-    return <div className="mx-auto max-w-6xl px-4 py-16 text-center text-gray-500">Loading cart...</div>;
+    return <div className="mx-auto max-w-6xl px-4 py-16 text-center text-[#8E887E]">Loading cart...</div>;
   }
 
   if (items.length === 0) {
     return (
       <div className="mx-auto max-w-6xl px-4 py-20 text-center">
-        <ShoppingCart className="mx-auto h-14 w-14 text-gray-300" />
-        <h1 className="mt-4 text-2xl font-bold text-gray-900">Your cart is empty</h1>
-        <p className="mt-2 text-gray-500">Add groceries and they will show up here.</p>
+        <div className="mx-auto flex h-16 w-16 items-center justify-center rounded-2xl bg-[#EFF5F2] border border-[#C4D6CC]">
+          <ShoppingCart className="h-8 w-8 text-[#2C5E3B]" />
+        </div>
+        <h1 className="mt-5 text-2xl font-bold font-serif text-[#222222]">Your cart is empty</h1>
+        <p className="mt-2 text-sm text-[#666159]">Add groceries and they will show up here.</p>
         <Link
           to="/search"
-          className="mt-6 inline-block rounded-full bg-emerald-600 px-6 py-3 font-semibold text-white hover:bg-emerald-700"
+          className="mt-6 inline-block rounded-xl bg-[#C86D51] px-6 py-3 font-semibold text-white shadow-sm hover:bg-[#B55B3F] transition-colors"
         >
           Start Shopping
         </Link>
@@ -57,13 +61,39 @@ export default function Cart() {
 
   const subtotal = lines.reduce((s, l) => s + l.lineTotal, 0);
   const hasUnavailable = lines.some((l) => !l.available);
+  const isFreeDelivery = subtotal >= freeDeliveryThreshold;
+  const progressPercent = Math.min(100, Math.round((subtotal / (freeDeliveryThreshold || 1)) * 100));
+  const neededForFree = Math.max(0, freeDeliveryThreshold - subtotal);
 
   return (
     <div className="mx-auto max-w-6xl px-4 py-8">
-      <h1 className="text-2xl font-bold text-gray-900">Shopping Cart</h1>
+      <h1 className="text-2xl font-bold font-serif text-[#222222] tracking-tight">Shopping Cart</h1>
+
+      {/* Dynamic Free Delivery Progress Milestone */}
+      <div className="mt-4 rounded-xl border border-[#C4D6CC] bg-[#EFF5F2] p-4 shadow-xs">
+        <div className="flex items-center justify-between text-xs font-semibold sm:text-sm">
+          <div className="flex items-center gap-2">
+            <Truck className="h-4 w-4 text-[#2C5E3B]" />
+            <span className={isFreeDelivery ? "font-bold text-[#2C5E3B]" : "text-[#222222]"}>
+              {isFreeDelivery
+                ? "🎉 Congratulations! You have unlocked FREE delivery in Birgunj!"
+                : `Add ${formatNPR(neededForFree)} more to get FREE delivery in Birgunj`}
+            </span>
+          </div>
+          <span className="font-extrabold text-[#2C5E3B]">
+            {formatNPR(subtotal)} / {formatNPR(freeDeliveryThreshold)}
+          </span>
+        </div>
+        <div className="mt-2.5 h-2 w-full overflow-hidden rounded-md bg-[#D8E6DF]">
+          <div
+            className="h-full bg-[#2C5E3B] transition-all duration-300 rounded-md"
+            style={{ width: `${progressPercent}%` }}
+          />
+        </div>
+      </div>
 
       {hasUnavailable && lines.length > 0 && (
-        <div className="mt-4 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+        <div className="mt-4 rounded-xl border border-[#F2D0C7] bg-[#F9ECE8] px-4 py-3 text-sm text-[#C86D51] font-medium">
           Some items are no longer available or over their stock limit. Adjust quantities before checkout.
         </div>
       )}
@@ -73,65 +103,65 @@ export default function Cart() {
           {lines.map((l) => (
             <div
               key={l.productId}
-              className={`flex gap-4 rounded-xl border bg-white p-3 ${l.available ? "border-gray-200" : "border-red-200"}`}
+              className={`flex gap-4 rounded-xl border bg-white p-3.5 shadow-artisanal ${l.available ? "border-[#EAE5D9]" : "border-[#F2D0C7]"}`}
             >
               <img
                 src={l.image || placeholderImage(l.name, l.categoryIndex)}
                 alt={l.name}
-                className="h-20 w-20 rounded-lg object-cover"
+                className="h-20 w-20 rounded-lg object-cover bg-[#F7F4EE]"
               />
               <div className="flex flex-1 flex-col">
-                <p className="text-sm font-semibold text-gray-800">{l.name}</p>
-                <p className="text-xs text-gray-400">{l.unit}</p>
-                {!l.available && <p className="text-xs font-semibold text-red-600">Currently unavailable</p>}
-                <div className="mt-auto flex items-center justify-between">
-                  <div className="flex items-center rounded-lg border border-emerald-600">
-                    <button onClick={() => setQty(l.productId, l.qty - 1)} type="button" className="p-1.5 hover:bg-emerald-50" aria-label="Decrease">
-                      <Minus className="h-4 w-4 text-emerald-700" />
+                <p className="text-sm font-semibold text-[#222222] font-serif">{l.name}</p>
+                <p className="text-xs text-[#666159] mt-0.5">{l.unit}</p>
+                {!l.available && <p className="text-xs font-semibold text-[#C86D51] mt-1">Currently unavailable</p>}
+                <div className="mt-auto flex items-center justify-between pt-2">
+                  <div className="flex items-center rounded-xl border border-[#2C5E3B] bg-white overflow-hidden shadow-xs">
+                    <button onClick={() => setQty(l.productId, l.qty - 1)} type="button" className="p-1.5 hover:bg-[#EFF5F2] text-[#2C5E3B]" aria-label="Decrease">
+                      <Minus className="h-4 w-4" />
                     </button>
-                    <span className="min-w-8 text-center text-sm font-bold">{l.qty}</span>
+                    <span className="min-w-8 text-center text-sm font-bold text-[#2C5E3B]">{l.qty}</span>
                     <button
                       onClick={() => setQty(l.productId, l.qty + 1)}
                       disabled={l.qty >= l.stock}
                       type="button"
-                      className="p-1.5 hover:bg-emerald-50 disabled:opacity-40"
+                      className="p-1.5 hover:bg-[#EFF5F2] disabled:opacity-40 text-[#2C5E3B]"
                       aria-label="Increase"
                     >
-                      <Plus className="h-4 w-4 text-emerald-700" />
+                      <Plus className="h-4 w-4" />
                     </button>
                   </div>
-                  <span className="text-sm font-bold text-emerald-700">{formatNPR(l.lineTotal)}</span>
+                  <span className="text-base font-bold text-[#2C5E3B]">{formatNPR(l.lineTotal)}</span>
                 </div>
               </div>
-              <button onClick={() => remove(l.productId)} type="button" className="self-start p-1 text-gray-400 hover:text-red-500" aria-label="Remove">
+              <button onClick={() => remove(l.productId)} type="button" className="self-start p-1 text-[#8E887E] hover:text-[#C86D51] transition-colors" aria-label="Remove">
                 <Trash2 className="h-4 w-4" />
               </button>
             </div>
           ))}
         </div>
 
-        <div className="h-fit rounded-xl border border-gray-200 bg-white p-5 lg:sticky lg:top-24">
-          <h2 className="text-lg font-bold text-gray-900">Order Summary</h2>
-          <div className="mt-4 space-y-2 text-sm">
+        <div className="h-fit rounded-xl border border-[#EAE5D9] bg-white p-6 shadow-artisanal lg:sticky lg:top-24">
+          <h2 className="text-lg font-bold font-serif text-[#222222]">Order Summary</h2>
+          <div className="mt-4 space-y-2.5 text-sm">
             <div className="flex justify-between">
-              <span className="text-gray-500">Subtotal</span>
-              <span className="font-semibold">{formatNPR(subtotal)}</span>
+              <span className="text-[#666159]">Subtotal</span>
+              <span className="font-bold text-[#222222]">{formatNPR(subtotal)}</span>
             </div>
             <div className="flex justify-between">
-              <span className="text-gray-500">Delivery</span>
-              <span className="font-medium text-emerald-600">Calculated at checkout</span>
+              <span className="text-[#666159]">Delivery</span>
+              <span className="font-medium text-[#2C5E3B]">Calculated at checkout</span>
             </div>
           </div>
           <Link
             to="/checkout"
             aria-disabled={hasUnavailable}
-            className={`mt-5 flex w-full items-center justify-center gap-2 rounded-lg bg-emerald-600 py-3 font-semibold text-white hover:bg-emerald-700 ${
-              hasUnavailable ? "pointer-events-none bg-gray-300 hover:bg-gray-300" : ""
+            className={`mt-6 flex w-full items-center justify-center gap-2 rounded-xl bg-[#C86D51] py-3 font-bold text-white shadow-xs hover:bg-[#B55B3F] transition-all ${
+              hasUnavailable ? "pointer-events-none bg-[#EAE5D9] text-[#8E887E] shadow-none" : ""
             }`}
           >
             Proceed to Checkout <ArrowRight className="h-4 w-4" />
           </Link>
-          <Link to="/search" className="mt-2 block text-center text-sm text-emerald-700 hover:underline">
+          <Link to="/search" className="mt-3 block text-center text-sm font-semibold text-[#C86D51] hover:underline">
             Continue shopping
           </Link>
         </div>

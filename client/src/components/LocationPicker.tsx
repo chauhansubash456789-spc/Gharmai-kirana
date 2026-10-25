@@ -1,133 +1,125 @@
-import { useEffect, useRef, useState, useCallback } from "react";
-import L from "leaflet";
-import "leaflet/dist/leaflet.css";
-import { Crosshair, MapPin, Loader2, AlertCircle, CheckCircle } from "lucide-react";
+import { useState, useCallback } from "react";
+import { Crosshair, Loader2, AlertCircle, CheckCircle, MapPin } from "lucide-react";
 
-const BIRGUNJ_CENTER: [number, number] = [27.0414, 84.8722];
+interface AddressComponents {
+  province?: string;
+  district?: string;
+  municipality?: string;
+  ward?: string;
+  tole?: string;
+  landmark?: string;
+  formattedAddress?: string;
+}
 
 interface LocationPickerProps {
   latitude: number | null;
   longitude: number | null;
   onLocationChange: (lat: number, lng: number) => void;
-  height?: number;
-  zoom?: number;
+  onAddressChange?: (address: AddressComponents) => void;
 }
 
 export function LocationPicker({
   latitude,
   longitude,
   onLocationChange,
-  height = 280,
-  zoom = 14,
+  onAddressChange,
 }: LocationPickerProps) {
-  const mapRef = useRef<HTMLDivElement>(null);
-  const mapInstanceRef = useRef<L.Map | null>(null);
-  const markerRef = useRef<L.Marker | null>(null);
   const [status, setStatus] = useState<{
     type: "idle" | "loading" | "success" | "error";
     message: string;
-  }>({ type: "idle", message: "Tap the map to place the pin manually if GPS is unavailable." });
+  }>({ type: "idle", message: "Click the button to auto-detect your location." });
   const [isLocating, setIsLocating] = useState(false);
 
-  const initializeMap = useCallback(() => {
-    if (mapInstanceRef.current || !mapRef.current) return;
+  const parseNominatimAddress = useCallback((address: Record<string, string>): AddressComponents => {
+    const province = address.state || address.province || "";
+    const district = address.county || address.district || address.city_district || "";
+    const municipality = address.city || address.town || address.municipality || address.village || "";
+    const ward = address.ward || address.suburb || address.neighbourhood || "";
+    const tole = address.road || address.street || address.trail || address.path || "";
+    const landmark = address.house_number || address.building || address.place_of_worship || address.tourism || "";
 
-    const map = L.map(mapRef.current, {
-      center: latitude && longitude ? [latitude, longitude] : BIRGUNJ_CENTER,
-      zoom: latitude && longitude ? zoom : 12,
-      zoomControl: true,
-    });
+    let formattedParts: string[] = [];
+    if (tole) formattedParts.push(tole);
+    if (ward) formattedParts.push(`Ward ${ward}`);
+    if (municipality) formattedParts.push(municipality);
+    if (district) formattedParts.push(district);
+    if (province) formattedParts.push(province);
+    const formattedAddress = formattedParts.join(", ");
 
-    L.tileLayer("https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png", {
-      maxZoom: 19,
-      attribution: '&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors',
-    }).addTo(map);
-
-    mapInstanceRef.current = map;
-
-    setTimeout(() => map.invalidateSize(), 200);
-
-    if (latitude && longitude) {
-      addMarker(latitude, longitude);
-      map.setView([latitude, longitude], zoom);
-    }
-
-    map.on("click", (e: L.LeafletMouseEvent) => {
-      const { lat, lng } = e.latlng;
-      addMarker(lat, lng);
-      onLocationChange(lat, lng);
-      setStatus({ type: "success", message: `Pinned at ${lat.toFixed(7)}, ${lng.toFixed(7)}` });
-    });
-  }, [latitude, longitude, zoom, onLocationChange]);
-
-  const addMarker = (lat: number, lng: number) => {
-    if (markerRef.current) {
-      markerRef.current.setLatLng([lat, lng]);
-    } else {
-      const marker = L.marker([lat, lng], { draggable: true }).addTo(mapInstanceRef.current!);
-      marker.on("dragend", () => {
-        const pos = marker.getLatLng();
-        onLocationChange(pos.lat, pos.lng);
-        setStatus({ type: "success", message: `Pinned at ${pos.lat.toFixed(7)}, ${pos.lng.toFixed(7)}` });
-      });
-      markerRef.current = marker;
-    }
-  };
-
-  useEffect(() => {
-    initializeMap();
-    return () => {
-      if (mapInstanceRef.current) {
-        mapInstanceRef.current.remove();
-        mapInstanceRef.current = null;
-        markerRef.current = null;
-      }
+    return {
+      province,
+      district,
+      municipality,
+      ward,
+      tole,
+      landmark,
+      formattedAddress,
     };
-  }, [initializeMap]);
+  }, []);
 
-  useEffect(() => {
-    if (mapInstanceRef.current && latitude && longitude) {
-      addMarker(latitude, longitude);
-      mapInstanceRef.current.setView([latitude, longitude], zoom);
+  const reverseGeocode = useCallback(async (lat: number, lng: number): Promise<AddressComponents | null> => {
+    try {
+      const response = await fetch(
+        `https://nominatim.openstreetmap.org/reverse?format=json&lat=${lat}&lon=${lng}&addressdetails=1&accept-language=en`,
+        { headers: { "User-Agent": "GharmaiKirana/1.0" } }
+      );
+      if (!response.ok) throw new Error("Reverse geocoding failed");
+      const data = await response.json();
+      if (!data.address) throw new Error("No address data returned");
+      return parseNominatimAddress(data.address);
+    } catch (err) {
+      console.error("Reverse geocoding error:", err);
+      return null;
     }
-  }, [latitude, longitude, zoom]);
+  }, [parseNominatimAddress]);
 
-  const handleLocate = () => {
+  const handleLocate = useCallback(async () => {
     if (!navigator.geolocation) {
       setStatus({ type: "error", message: "Geolocation is not supported by this browser." });
       return;
     }
 
     setIsLocating(true);
-    setStatus({ type: "loading", message: "Locating…" });
+    setStatus({ type: "loading", message: "Detecting location…" });
 
     navigator.geolocation.getCurrentPosition(
-      (pos) => {
+      async (pos) => {
         const { latitude: lat, longitude: lng, accuracy } = pos.coords;
-        addMarker(lat, lng);
+
         onLocationChange(lat, lng);
-        if (mapInstanceRef.current) {
-          mapInstanceRef.current.setView([lat, lng], 16);
+
+        setStatus({ type: "loading", message: "Resolving address…" });
+
+        const addressData = await reverseGeocode(lat, lng);
+
+        if (addressData) {
+          onAddressChange?.(addressData);
+          setStatus({
+            type: "success",
+            message: `Location detected (±${Math.round(accuracy)}m) — address auto-filled.`,
+          });
+        } else {
+          setStatus({
+            type: "success",
+            message: `GPS locked (±${Math.round(accuracy)}m). Please fill address manually.`,
+          });
         }
-        setStatus({
-          type: "success",
-          message: `GPS locked with ±${Math.round(accuracy)} m accuracy.`,
-        });
+
         setIsLocating(false);
       },
       (err) => {
-        let msg = "Could not get your GPS location. Please tap the map to pin it manually.";
+        let msg = "Could not get your GPS location. Please fill address manually.";
         if (err.code === err.PERMISSION_DENIED) {
-          msg = "Location permission denied. Please enable location access or tap the map manually.";
+          msg = "Location permission denied. Please enable location access or fill address manually.";
         } else if (err.code === err.TIMEOUT) {
-          msg = "Location request timed out. Please tap the map to pin it manually.";
+          msg = "Location request timed out. Please fill address manually.";
         }
         setStatus({ type: "error", message: msg });
         setIsLocating(false);
       },
       { enableHighAccuracy: true, timeout: 10000 }
     );
-  };
+  }, [onLocationChange, onAddressChange, reverseGeocode]);
 
   return (
     <div className="border rounded-3 p-3 mb-3 bg-light">
@@ -146,7 +138,7 @@ export function LocationPicker({
           {isLocating ? (
             <>
               <Loader2 className="me-1 animate-spin" size={14} />
-              Locating…
+              Detecting location…
             </>
           ) : (
             <>
@@ -157,44 +149,25 @@ export function LocationPicker({
         </button>
       </div>
 
-      <div
-        ref={mapRef}
-        id="location-map"
-        className="rounded-3"
-        style={{ height, width: "100%", zIndex: 1 }}
-      />
-
       <div className="row g-2 mt-2">
-        <div className="col-6 col-md-3">
-          <input
-            type="text"
-            name="latitude"
-            id="lat"
-            className="form-control form-control-sm"
-            placeholder="Latitude"
-            readOnly
-            value={latitude ? latitude.toFixed(7) : ""}
-            required
-          />
-        </div>
-        <div className="col-6 col-md-3">
-          <input
-            type="text"
-            name="longitude"
-            id="lng"
-            className="form-control form-control-sm"
-            placeholder="Longitude"
-            readOnly
-            value={longitude ? longitude.toFixed(7) : ""}
-            required
-          />
-        </div>
+        <input
+          type="hidden"
+          name="latitude"
+          id="lat"
+          value={latitude ? latitude.toFixed(7) : ""}
+        />
+        <input
+          type="hidden"
+          name="longitude"
+          id="lng"
+          value={longitude ? longitude.toFixed(7) : ""}
+        />
         <div className="col-md-6">
           <input
             type="text"
             name="landmark"
             className="form-control form-control-sm"
-            placeholder="Landmark / address (optional)"
+            placeholder="Landmark / nearby feature (optional)"
           />
         </div>
       </div>

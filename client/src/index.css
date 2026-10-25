@@ -1,17 +1,124 @@
 @import "tailwindcss";
 
 :root {
-  --background: #faf9f6;
-  --foreground: #111827;
+  --background: #FDFBF7;
+  --foreground: #222222;
+  --primary: #C86D51;
+  --primary-hover: #B55B3F;
+  --primary-light: #F9ECE8;
+  --secondary: #2C5E3B;
+  --secondary-hover: #234D30;
+  --secondary-light: #EBF2EE;
+  --card: #FFFFFF;
+  --surface: #FDFBF7;
+  --surface-warm: #F7F4EE;
+  --border: #EAE5D9;
+  --border-focus: #C86D51;
+  --text-charcoal: #222222;
+  --text-muted: #666159;
+  --text-light: #8E887E;
+  --badge-amber: #EAA844;
+  --badge-amber-bg: #FDF6E9;
+  --badge-sage: #8FA89B;
+  --badge-sage-bg: #EFF5F2;
+  --font-serif: "Lora", Georgia, serif;
+  --font-sans: "Outfit", system-ui, -apple-system, sans-serif;
 }
 
 @theme inline {
   --color-background: var(--background);
   --color-foreground: var(--foreground);
+  --color-primary: var(--primary);
+  --color-secondary: var(--secondary);
+  --color-card: var(--card);
+  --color-surface: var(--surface);
+  --color-border: var(--border);
+  --font-serif: var(--font-serif);
+  --font-sans: var(--font-sans);
 }
 
 body {
   background: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-sans);
+  margin: 0;
+  padding: 0;
+  -webkit-font-smoothing: antialiased;
+}
+
+h1, h2, h3, .font-serif-heading {
+  font-family: var(--font-serif);
+  color: var(--foreground);
+  letter-spacing: -0.015em;
+}
+
+/* Material Symbols alignment */
+.material-symbols-outlined {
+  font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+  vertical-align: middle;
+}
+
+/* Organic & Artisanal Design System Utility Classes */
+.bg-cream {
+  background-color: #FDFBF7;
+}
+
+.bg-warm-surface {
+  background-color: #F7F4EE;
+}
+
+.border-warm {
+  border-color: #EAE5D9;
+}
+
+.text-charcoal {
+  color: #222222;
+}
+
+.text-warm-muted {
+  color: #666159;
+}
+
+.bg-terracotta {
+  background-color: #C86D51;
+}
+
+.text-terracotta {
+  color: #C86D51;
+}
+
+.border-terracotta {
+  border-color: #C86D51;
+}
+
+.bg-forest {
+  background-color: #2C5E3B;
+}
+
+.text-forest {
+  color: #2C5E3B;
+}
+
+.border-forest {
+  border-color: #2C5E3B;
+}
+
+.bg-sage-badge {
+  background-color: #EFF5F2;
+  color: #2C5E3B;
+  border: 1px solid #C4D6CC;
+}
+
+.bg-amber-badge {
+  background-color: #FDF6E9;
+  color: #B27318;
+  border: 1px solid #F3DFB7;
+}
+
+.shadow-artisanal {
+  box-shadow: 0 4px 14px rgba(44, 94, 59, 0.05);
+}
+
+.shadow-artisanal-hover:hover {
+  box-shadow: 0 8px 20px rgba(44, 94, 59, 0.08);
 }

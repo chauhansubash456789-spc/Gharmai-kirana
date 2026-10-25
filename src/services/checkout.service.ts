@@ -1,4 +1,5 @@
 import { prisma } from "../lib/prisma";
+import { getFreeDeliveryThreshold } from "./setting.service";
 
 export interface CartLine {
   id: number;
@@ -116,7 +117,8 @@ export async function getOrderTotals(
   const zone = await prisma.deliveryZone.findUnique({ where: { id: zoneId } });
   let deliveryFee = 0;
   if (zone) {
-    deliveryFee = subtotal >= zone.minOrderForFree ? 0 : zone.charge;
+    const threshold = zone.minOrderForFree > 0 ? zone.minOrderForFree : await getFreeDeliveryThreshold();
+    deliveryFee = subtotal >= threshold ? 0 : zone.charge;
   }
 
   return {

@@ -1,8 +1,8 @@
 export function Spinner({ label = "Loading..." }: { label?: string }) {
   return (
-    <div className="flex flex-col items-center justify-center gap-3 py-16 text-gray-500">
-      <div className="h-9 w-9 animate-spin rounded-full border-4 border-emerald-200 border-t-emerald-600" />
-      <span className="text-sm">{label}</span>
+    <div className="flex flex-col items-center justify-center gap-3 py-16 text-[#8E887E]">
+      <div className="h-9 w-9 animate-spin rounded-full border-4 border-[#EAE5D9] border-t-[#C86D51]" />
+      <span className="text-sm font-medium">{label}</span>
     </div>
   );
 }
@@ -17,9 +17,9 @@ export function ErrorBox({ message }: { message: string }) {
 
 export function EmptyBox({ message, emoji = "🛒" }: { message: string; emoji?: string }) {
   return (
-    <div className="rounded-xl border border-dashed border-gray-300 bg-white px-6 py-14 text-center">
+    <div className="rounded-xl border border-dashed border-[#D4CFC4] bg-[#FDFBF7] px-6 py-14 text-center">
       <div className="text-4xl">{emoji}</div>
-      <p className="mt-3 text-sm font-medium text-gray-500">{message}</p>
+      <p className="mt-3 text-sm font-medium text-[#666159]">{message}</p>
     </div>
   );
 }

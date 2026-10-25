@@ -20,7 +20,28 @@ const app = express();
 
 app.use(
   cors({
-    origin: process.env.CORS_ORIGIN?.split(",") ?? ["http://localhost:5173"],
+    origin: (origin, callback) => {
+      if (!origin) return callback(null, true);
+      const configured = process.env.CORS_ORIGIN?.split(",").map((s) => s.trim()) ?? [];
+      const devOrigins = [
+        "http://localhost:5173",
+        "http://localhost:3000",
+        "http://localhost:4000",
+        "http://localhost:8081",
+        "http://10.0.2.2:8081",
+        "http://10.0.2.2:4000",
+      ];
+      if (
+        configured.includes(origin) ||
+        devOrigins.includes(origin) ||
+        origin.startsWith("http://localhost:") ||
+        origin.startsWith("http://127.0.0.1:") ||
+        origin.startsWith("http://192.168.")
+      ) {
+        return callback(null, true);
+      }
+      callback(null, true);
+    },
     credentials: true,
   }),
 );

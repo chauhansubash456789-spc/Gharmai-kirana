@@ -40,6 +40,14 @@ export interface DeliveryZone {
   sortOrder: number;
 }
 
+export interface StoreSettings {
+  freeDeliveryThreshold: number;
+  minOrderAmount: number;
+  storeName: string;
+  storePhone: string;
+  openHours: string;
+}
+
 export interface Coupon {
   id: number;
   code: string;
@@ -92,7 +100,7 @@ export interface Order {
   itemsSubtotal: number;
   discountAmount: number;
   total: number;
-  paymentMethod: "cod" | "qr" | "esewa";
+  paymentMethod: "cod" | "qr" | "esewa" | "khalti";
   paymentStatus: "pending" | "paid";
   paymentRef: string | null;
   status: string;
@@ -102,6 +110,7 @@ export interface Order {
   deliveryOtp: string | null;
   proofImage: string | null;
   deliveryNotes: string | null;
+  deliveryPerson?: { name: string; phone: string; vehicleType?: string | null } | null;
   createdAt: string;
   updatedAt: string;
   items?: OrderItem[];

@@ -27,9 +27,43 @@ export default function Checkout() {
     phone: "",
     addressLine: "",
     landmark: "",
+    province: "",
+    district: "",
+    municipality: "",
+    ward: "",
+    tole: "",
     latitude: null as number | null,
     longitude: null as number | null,
   });
+
+  const handleAddressChange = (address: {
+    province?: string;
+    district?: string;
+    municipality?: string;
+    ward?: string;
+    tole?: string;
+    landmark?: string;
+    formattedAddress?: string;
+  }) => {
+    const parts: string[] = [];
+    if (address.tole) parts.push(address.tole);
+    if (address.ward) parts.push(`Ward ${address.ward}`);
+    if (address.municipality) parts.push(address.municipality);
+    if (address.district) parts.push(address.district);
+    if (address.province) parts.push(address.province);
+    const fullAddress = parts.join(", ");
+
+    setNewAddress((prev) => ({
+      ...prev,
+      addressLine: fullAddress || prev.addressLine,
+      landmark: address.landmark || prev.landmark,
+      province: address.province || prev.province,
+      district: address.district || prev.district,
+      municipality: address.municipality || prev.municipality,
+      ward: address.ward || prev.ward,
+      tole: address.tole || prev.tole,
+    }));
+  };
   const [paymentMethod, setPaymentMethod] = useState<"cod" | "qr" | "esewa">("cod");
   const [couponInput, setCouponInput] = useState("");
   const [notes, setNotes] = useState("");
@@ -144,9 +178,7 @@ export default function Checkout() {
   const validForNewAddress =
     newAddress.recipientName.trim().length >= 2 &&
     /^9\d{9}$/.test(newAddress.phone.trim()) &&
-    newAddress.addressLine.trim().length >= 4 &&
-    newAddress.latitude !== null &&
-    newAddress.longitude !== null;
+    newAddress.addressLine.trim().length >= 4;
 
   const onSubmit = async (e: FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -186,24 +218,24 @@ export default function Checkout() {
 
   return (
     <div className="mx-auto max-w-6xl px-4 py-8">
-      <h1 className="mb-6 text-2xl font-bold text-gray-900">Checkout</h1>
+      <h1 className="mb-6 text-2xl font-bold font-serif text-[#222222] tracking-tight">Checkout</h1>
 
       {hasUnavailable && (
-        <div className="mb-5 rounded-lg border border-red-200 bg-red-50 px-4 py-3 text-sm text-red-700">
+        <div className="mb-5 rounded-xl border border-[#F2D0C7] bg-[#F9ECE8] px-4 py-3 text-sm text-[#C86D51] font-medium">
           Some items in your cart are unavailable. Remove or adjust them before placing your order.
         </div>
       )}
 
       <form onSubmit={onSubmit} className="grid gap-6 lg:grid-cols-3">
         <div className="space-y-6 lg:col-span-2">
-          <section className="rounded-xl border border-gray-200 bg-white p-5">
-            <h2 className="text-base font-bold text-gray-900">1. Delivery Address</h2>
+          <section className="rounded-xl border border-[#EAE5D9] bg-white p-5 shadow-artisanal">
+            <h2 className="text-base font-bold font-serif text-[#222222]">1. Delivery Address</h2>
             {addresses.length > 0 && !showNewAddress && (
               <div className="mt-4 space-y-2">
                 {addresses.map((a) => (
                   <label
                     key={a.id}
-                    className={`flex cursor-pointer gap-3 rounded-lg border p-3 ${addressId === String(a.id) ? "border-emerald-600 bg-emerald-50" : "border-gray-200"}`}
+                    className={`flex cursor-pointer gap-3 rounded-xl border p-3.5 transition-colors ${addressId === String(a.id) ? "border-[#C86D51] bg-[#F9ECE8]" : "border-[#EAE5D9] hover:bg-[#FDFBF7]"}`}
                   >
                     <input
                       type="radio"
@@ -211,17 +243,17 @@ export default function Checkout() {
                       value={a.id}
                       checked={addressId === String(a.id)}
                       onChange={() => setAddressId(String(a.id))}
-                      className="mt-1"
+                      className="mt-1 accent-[#C86D51]"
                     />
                     <div className="text-sm">
-                      <p className="font-semibold text-gray-800">
+                      <p className="font-semibold text-[#222222]">
                         {a.label} — {a.recipientName} ({a.phone})
                       </p>
-                      <p className="text-gray-500">{a.addressLine}{a.landmark ? `, near ${a.landmark}` : ""}</p>
+                      <p className="text-[#666159]">{a.addressLine}{a.landmark ? `, near ${a.landmark}` : ""}</p>
                     </div>
                   </label>
                 ))}
-                <button type="button" onClick={() => setShowNewAddress(true)} className="text-sm font-semibold text-emerald-700 hover:underline">
+                <button type="button" onClick={() => setShowNewAddress(true)} className="text-sm font-semibold text-[#C86D51] hover:underline">
                   + Add a new address
                 </button>
               </div>
@@ -230,40 +262,40 @@ export default function Checkout() {
             {showNewAddress && (
               <div className="mt-4 grid gap-3 sm:grid-cols-2">
                 <div>
-                  <label className="text-xs font-medium text-gray-600">Recipient name</label>
+                  <label className="text-xs font-medium text-[#666159]">Recipient name</label>
                   <input
                     value={newAddress.recipientName}
                     onChange={(e) => setNewAddress({ ...newAddress, recipientName: e.target.value })}
-                    className="mt-1 w-full rounded-lg border border-gray-300 px-3 py-2 text-sm"
+                    className="mt-1 w-full rounded-xl border border-[#EAE5D9] px-3 py-2 text-sm text-[#222222] focus:border-[#C86D51] outline-none"
                   />
                 </div>
                 <div>
-                  <label className="text-xs font-medium text-gray-600">Phone</label>
+                  <label className="text-xs font-medium text-[#666159]">Phone</label>
                   <input
                     value={newAddress.phone}
                     onChange={(e) => setNewAddress({ ...newAddress, phone: e.target.value })}
                     placeholder="98XXXXXXXX"
-                    className="mt-1 w-full rounded-lg border border-gray-300 px-3 py-2 text-sm"
+                    className="mt-1 w-full rounded-xl border border-[#EAE5D9] px-3 py-2 text-sm text-[#222222] focus:border-[#C86D51] outline-none"
                   />
                 </div>
                 <LocationPicker
                   latitude={newAddress.latitude}
                   longitude={newAddress.longitude}
                   onLocationChange={(lat, lng) => setNewAddress({ ...newAddress, latitude: lat, longitude: lng })}
-                  height={280}
+                  onAddressChange={handleAddressChange}
                 />
                 <div className="sm:col-span-2">
-                  <label className="text-xs font-medium text-gray-600">Full address (Tole, Ward, Landmark)</label>
+                  <label className="text-xs font-medium text-[#666159]">Full address (Tole, Ward, Landmark)</label>
                   <input
                     value={newAddress.addressLine}
                     onChange={(e) => setNewAddress({ ...newAddress, addressLine: e.target.value })}
-                    className="mt-1 w-full rounded-lg border border-gray-300 px-3 py-2 text-sm"
+                    className="mt-1 w-full rounded-xl border border-[#EAE5D9] px-3 py-2 text-sm text-[#222222] focus:border-[#C86D51] outline-none"
                   />
                   <input
                     value={newAddress.landmark}
                     onChange={(e) => setNewAddress({ ...newAddress, landmark: e.target.value })}
                     placeholder="Nearby landmark (optional)"
-                    className="mt-2 w-full rounded-lg border border-gray-300 px-3 py-2 text-sm"
+                    className="mt-2 w-full rounded-xl border border-[#EAE5D9] px-3 py-2 text-sm text-[#222222] focus:border-[#C86D51] outline-none"
                   />
                 </div>
                 {addresses.length > 0 && (
@@ -273,7 +305,7 @@ export default function Checkout() {
                       setShowNewAddress(false);
                       setAddressId((a) => a || String(addresses[0].id));
                     }}
-                    className="text-sm text-gray-500 hover:underline sm:col-span-2"
+                    className="text-sm text-[#666159] hover:underline sm:col-span-2"
                   >
                     Cancel — use saved address
                   </button>
@@ -282,13 +314,13 @@ export default function Checkout() {
             )}
           </section>
 
-          <section className="rounded-xl border border-gray-200 bg-white p-5">
-            <h2 className="text-base font-bold text-gray-900">2. Delivery Zone</h2>
+          <section className="rounded-xl border border-[#EAE5D9] bg-white p-5 shadow-artisanal">
+            <h2 className="text-base font-bold font-serif text-[#222222]">2. Delivery Zone</h2>
             <div className="mt-3 grid gap-2 sm:grid-cols-3">
               {zones.map((z) => (
                 <label
                   key={z.id}
-                  className={`cursor-pointer rounded-lg border p-3 text-sm ${zoneId === z.id ? "border-emerald-600 bg-emerald-50" : "border-gray-200"}`}
+                  className={`cursor-pointer rounded-xl border p-3.5 text-sm transition-colors ${zoneId === z.id ? "border-[#2C5E3B] bg-[#EFF5F2]" : "border-[#EAE5D9] hover:bg-[#FDFBF7]"}`}
                 >
                   <input
                     type="radio"
@@ -299,10 +331,10 @@ export default function Checkout() {
                       setZoneId(z.id);
                       void updateTotals(lines, z.id, totals.couponCode);
                     }}
-                    className="mr-1"
+                    className="mr-1 accent-[#2C5E3B]"
                   />
-                  <span className="font-semibold text-gray-800">{z.name}</span>
-                  <p className="mt-1 text-xs text-gray-500">
+                  <span className="font-semibold text-[#222222]">{z.name}</span>
+                  <p className="mt-1 text-xs text-[#666159]">
                     {z.charge === 0 ? "Free delivery" : `Delivery Rs. ${z.charge}`}
                     {z.minOrderForFree > 0 && ` — free above ${formatNPR(z.minOrderForFree)}`}
                   </p>
@@ -311,9 +343,9 @@ export default function Checkout() {
             </div>
           </section>
 
-          <section className="rounded-xl border border-gray-200 bg-white p-5">
-            <h2 className="text-base font-bold text-gray-900">3. Payment Method</h2>
-            <div className="mt-3 grid gap-2 sm:grid-cols-2">
+          <section className="rounded-xl border border-[#EAE5D9] bg-white p-5 shadow-artisanal">
+            <h2 className="text-base font-bold font-serif text-[#222222]">3. Payment Method</h2>
+            <div className="mt-3 grid gap-2 sm:grid-cols-3">
               {[
                 { id: "cod" as const, name: "Cash on Delivery", desc: "Pay cash when your order arrives" },
                 { id: "esewa" as const, name: "eSewa", desc: "Pay securely online with your eSewa wallet" },
@@ -321,7 +353,7 @@ export default function Checkout() {
               ].map((p) => (
                 <label
                   key={p.id}
-                  className={`cursor-pointer rounded-lg border p-3 ${paymentMethod === p.id ? "border-emerald-600 bg-emerald-50" : "border-gray-200"}`}
+                  className={`cursor-pointer rounded-xl border p-3.5 transition-colors ${paymentMethod === p.id ? "border-[#C86D51] bg-[#F9ECE8]" : "border-[#EAE5D9] hover:bg-[#FDFBF7]"}`}
                 >
                   <input
                     type="radio"
@@ -329,46 +361,46 @@ export default function Checkout() {
                     value={p.id}
                     checked={paymentMethod === p.id}
                     onChange={() => setPaymentMethod(p.id)}
-                    className="mr-1"
+                    className="mr-1 accent-[#C86D51]"
                   />
-                  <span className="text-sm font-semibold text-gray-800">{p.name}</span>
-                  <p className="mt-0.5 text-xs text-gray-500">{p.desc}</p>
+                  <span className="text-sm font-semibold text-[#222222]">{p.name}</span>
+                  <p className="mt-0.5 text-xs text-[#666159]">{p.desc}</p>
                 </label>
               ))}
             </div>
           </section>
 
           {paymentMethod === "qr" && (
-            <section className="rounded-xl border border-gray-200 bg-white p-5">
-              <h2 className="text-base font-bold text-gray-900">Scan to pay</h2>
+            <section className="rounded-xl border border-[#EAE5D9] bg-white p-5 shadow-artisanal">
+              <h2 className="text-base font-bold font-serif text-[#222222]">Scan to pay</h2>
               <div className="mt-3">
                 <MerchantQr amount={totals.total} />
               </div>
             </section>
           )}
 
-          <section className="rounded-xl border border-gray-200 bg-white p-5">
-            <h2 className="text-base font-bold text-gray-900">4. Coupon &amp; Notes</h2>
+          <section className="rounded-xl border border-[#EAE5D9] bg-white p-5 shadow-artisanal">
+            <h2 className="text-base font-bold font-serif text-[#222222]">4. Coupon &amp; Notes</h2>
             <div className="mt-3 flex gap-2">
-              <div className="flex flex-1 items-center rounded-lg border border-gray-300 px-3">
-                <Ticket className="h-4 w-4 text-gray-400" />
+              <div className="flex flex-1 items-center rounded-xl border border-[#EAE5D9] px-3 bg-white">
+                <Ticket className="h-4 w-4 text-[#8E887E]" />
                 <input
                   value={couponInput}
                   onChange={(e) => setCouponInput(e.target.value.toUpperCase())}
                   placeholder="Coupon code (e.g. WELCOME100)"
-                  className="w-full px-2 py-2.5 text-sm outline-none"
+                  className="w-full px-2 py-2.5 text-sm outline-none text-[#222222] placeholder:text-[#8E887E]"
                 />
               </div>
               <button
                 type="button"
                 onClick={applyCoupon}
-                className="rounded-lg bg-gray-900 px-4 text-sm font-semibold text-white hover:bg-gray-800"
+                className="rounded-xl bg-[#2C5E3B] px-5 text-sm font-semibold text-white hover:bg-[#1D4028] shadow-xs transition-colors"
               >
                 Apply
               </button>
             </div>
             {totals.couponCode && (
-              <p className="mt-2 text-xs font-semibold text-emerald-700">
+              <p className="mt-2 text-xs font-semibold text-[#2C5E3B]">
                 Coupon {totals.couponCode} applied — you saved {formatNPR(totals.discount)}
               </p>
             )}
@@ -380,51 +412,51 @@ export default function Checkout() {
               onChange={(e) => setNotes(e.target.value)}
               placeholder="Order notes (optional)"
               rows={2}
-              className="mt-3 w-full rounded-lg border border-gray-300 px-3 py-2 text-sm"
+              className="mt-3 w-full rounded-xl border border-[#EAE5D9] px-3 py-2 text-sm text-[#222222] focus:border-[#C86D51] outline-none"
             />
           </section>
         </div>
 
-        <div className="h-fit rounded-xl border border-gray-200 bg-white p-5 lg:sticky lg:top-36">
-          <h2 className="text-lg font-bold text-gray-900">Order Summary</h2>
+        <div className="h-fit rounded-xl border border-[#EAE5D9] bg-white p-6 shadow-artisanal lg:sticky lg:top-36">
+          <h2 className="text-lg font-bold font-serif text-[#222222]">Order Summary</h2>
           <div className="mt-4 max-h-64 space-y-2 overflow-y-auto">
             {lines.map((l) => (
               <div key={l.productId} className="flex items-center gap-2 text-sm">
-                <img src={l.image || placeholderImage(l.name, l.categoryIndex)} alt="" className="h-10 w-10 rounded object-cover" />
+                <img src={l.image || placeholderImage(l.name, l.categoryIndex)} alt="" className="h-10 w-10 rounded-lg object-cover bg-[#F7F4EE]" />
                 <div className="flex-1">
-                  <p className={`line-clamp-1 ${l.available ? "text-gray-700" : "text-red-500 line-through"}`}>{l.name}</p>
-                  <p className="text-xs text-gray-400">x{l.qty} · {formatNPR(l.price)}</p>
+                  <p className={`line-clamp-1 font-medium ${l.available ? "text-[#222222]" : "text-red-500 line-through"}`}>{l.name}</p>
+                  <p className="text-xs text-[#666159]">x{l.qty} · {formatNPR(l.price)}</p>
                 </div>
-                <span className="font-semibold">{formatNPR(l.lineTotal)}</span>
+                <span className="font-bold text-[#222222]">{formatNPR(l.lineTotal)}</span>
               </div>
             ))}
           </div>
 
-          <div className="mt-4 space-y-2 border-t border-gray-200 pt-4 text-sm">
-            <div className="flex justify-between text-gray-600">
+          <div className="mt-4 space-y-2.5 border-t border-[#EAE5D9] pt-4 text-sm">
+            <div className="flex justify-between text-[#666159]">
               <span>Subtotal</span>
-              <span className="font-medium text-gray-900">{formatNPR(totals.subtotal)}</span>
+              <span className="font-bold text-[#222222]">{formatNPR(totals.subtotal)}</span>
             </div>
-            <div className="flex justify-between text-gray-600">
+            <div className="flex justify-between text-[#666159]">
               <span>Delivery</span>
-              <span className="font-medium text-gray-900">
-                {totals.deliveryFee === 0 ? <span className="text-emerald-600">FREE</span> : formatNPR(totals.deliveryFee)}
+              <span className="font-medium text-[#222222]">
+                {totals.deliveryFee === 0 ? <span className="text-[#2C5E3B] font-semibold">FREE</span> : formatNPR(totals.deliveryFee)}
               </span>
             </div>
             {totals.discount > 0 && (
-              <div className="flex justify-between text-emerald-600">
+              <div className="flex justify-between text-[#2C5E3B]">
                 <span>Discount</span>
-                <span className="font-medium">− {formatNPR(totals.discount)}</span>
+                <span className="font-bold">− {formatNPR(totals.discount)}</span>
               </div>
             )}
-            <div className="flex justify-between border-t border-gray-200 pt-3 text-base font-bold text-gray-900">
+            <div className="flex justify-between border-t border-[#EAE5D9] pt-3 text-base font-bold text-[#222222]">
               <span>Total</span>
-              <span className="text-emerald-700">{formatNPR(totals.total)}</span>
+              <span className="text-xl text-[#2C5E3B] font-extrabold">{formatNPR(totals.total)}</span>
             </div>
           </div>
 
           {error && (
-            <div className="mt-4 rounded-lg bg-red-50 px-3 py-2 text-sm font-medium text-red-600">{error}</div>
+            <div className="mt-4 rounded-xl bg-[#F9ECE8] border border-[#F2D0C7] px-3 py-2 text-sm font-medium text-[#C86D51]">{error}</div>
           )}
 
           <button
@@ -436,11 +468,11 @@ export default function Checkout() {
               (!addressId && !showNewAddress && addresses.length > 0) ||
               (showNewAddress && !validForNewAddress)
             }
-            className="mt-5 flex w-full items-center justify-center gap-2 rounded-lg bg-emerald-600 py-3 font-semibold text-white hover:bg-emerald-700 disabled:bg-gray-300"
+            className="mt-6 flex w-full items-center justify-center gap-2 rounded-xl bg-[#C86D51] py-3.5 font-bold text-white shadow-xs hover:bg-[#B55B3F] transition-all disabled:bg-[#EAE5D9] disabled:text-[#8E887E] disabled:shadow-none"
           >
             {submitting ? <><Loader2 className="h-4 w-4 animate-spin" /> Placing order...</> : paymentMethod === "esewa" ? `Pay with eSewa · ${formatNPR(totals.total)}` : `Place Order · ${formatNPR(totals.total)}`}
           </button>
-          <p className="mt-2 text-center text-xs text-gray-400">
+          <p className="mt-2.5 text-center text-xs text-[#8E887E]">
             By placing this order you agree to our delivery terms for Birgunj.
           </p>
         </div>

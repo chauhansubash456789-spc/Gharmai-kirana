@@ -29,6 +29,11 @@ import {
 } from "../services/zone.service";
 import { listCategoriesWithProductCount, createCategory, deleteCategory } from "../services/category.service";
 import { listCoupons, createCoupon, toggleCoupon } from "../services/coupon.service";
+import {
+  getAllStoreSettings,
+  updateFreeDeliveryThreshold,
+  setStoreSetting,
+} from "../services/setting.service";
 
 export const adminRouter = Router();
 
@@ -233,4 +238,49 @@ adminRouter.post("/coupons/:id/toggle", async (req, res) => {
   const active = Boolean(req.body?.active);
   await toggleCoupon(Number(req.params.id), active);
   res.json({ ok: true });
+});
+
+/* ---------- Store Settings & Free Delivery Threshold ---------- */
+const settingsSchema = z.object({
+  freeDeliveryThreshold: z.coerce.number().min(0).optional(),
+  minOrderAmount: z.coerce.number().min(0).optional(),
+  storeName: z.string().trim().min(1).optional(),
+  storePhone: z.string().trim().optional(),
+  openHours: z.string().trim().optional(),
+});
+
+const freeDeliverySchema = z.object({
+  threshold: z.coerce.number().min(0, "Threshold must be greater than or equal to 0"),
+});
+
+adminRouter.get("/settings", async (_req, res) => {
+  res.json(await getAllStoreSettings());
+});
+
+adminRouter.put("/settings", validateBody(settingsSchema), async (_req, res) => {
+  const data = validatedOf<z.infer<typeof settingsSchema>>(res);
+
+  if (data.freeDeliveryThreshold !== undefined) {
+    await updateFreeDeliveryThreshold(data.freeDeliveryThreshold);
+  }
+  if (data.minOrderAmount !== undefined) {
+    await setStoreSetting("min_order_amount", String(data.minOrderAmount));
+  }
+  if (data.storeName !== undefined) {
+    await setStoreSetting("store_name", data.storeName);
+  }
+  if (data.storePhone !== undefined) {
+    await setStoreSetting("store_phone", data.storePhone);
+  }
+  if (data.openHours !== undefined) {
+    await setStoreSetting("open_hours", data.openHours);
+  }
+
+  res.json({ ok: true, settings: await getAllStoreSettings() });
+});
+
+adminRouter.post("/settings/free-delivery", validateBody(freeDeliverySchema), async (_req, res) => {
+  const { threshold } = validatedOf<z.infer<typeof freeDeliverySchema>>(res);
+  const updated = await updateFreeDeliveryThreshold(threshold);
+  res.json({ ok: true, freeDeliveryThreshold: updated });
 });

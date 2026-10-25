@@ -30,35 +30,35 @@ export default function ForgotPassword() {
 
   return (
     <div className="mx-auto max-w-md px-4 py-12">
-      <div className="rounded-2xl border border-gray-200 bg-white p-6">
-        <h1 className="text-2xl font-bold text-gray-900">Forgot Password</h1>
-        <p className="mt-1 text-sm text-gray-500">
+      <div className="rounded-xl border border-[#EAE5D9] bg-white p-8 shadow-artisanal">
+        <h1 className="font-serif text-2xl font-bold text-[#222222]">Forgot Password</h1>
+        <p className="mt-1 text-sm text-[#666159]">
           Enter the email or mobile number linked to your account and we'll send you a reset link.
         </p>
 
         {done ? (
           <div className="mt-6">
-            <div className="flex items-start gap-3 rounded-xl border border-emerald-200 bg-emerald-50 p-4">
-              <Mail className="mt-0.5 h-5 w-5 text-emerald-600" />
+            <div className="flex items-start gap-3 rounded-xl border border-[#C4D6CC] bg-[#EFF5F2] p-4">
+              <Mail className="mt-0.5 h-5 w-5 text-[#2C5E3B]" />
               <div>
-                <p className="text-sm font-semibold text-emerald-800">Check your email</p>
-                <p className="mt-1 text-sm text-emerald-700">
+                <p className="text-sm font-semibold text-[#2C5E3B]">Check your email</p>
+                <p className="mt-1 text-sm text-[#3E704D]">
                   If an account exists, we've sent a reset link. It expires in 30 minutes.
                 </p>
               </div>
             </div>
             {devLink && (
-              <details className="mt-4 rounded-lg border border-gray-200 bg-gray-50 p-3">
-                <summary className="cursor-pointer text-xs font-semibold text-gray-500">
+              <details className="mt-4 rounded-xl border border-[#EAE5D9] bg-[#FDFBF7] p-3">
+                <summary className="cursor-pointer text-xs font-semibold text-[#8E887E]">
                   Dev mode (SMTP not configured) — reset link
                 </summary>
-                <a href={devLink} className="mt-2 block break-all text-xs font-medium text-emerald-700 hover:underline">
+                <a href={devLink} className="mt-2 block break-all text-xs font-medium text-[#2C5E3B] hover:text-[#C86D51]">
                   {devLink}
                 </a>
               </details>
             )}
-            <p className="mt-5 text-center text-sm text-gray-500">
-              <Link to="/login" className="font-semibold text-emerald-700 hover:underline">
+            <p className="mt-5 text-center text-sm text-[#8E887E]">
+              <Link to="/login" className="font-semibold text-[#2C5E3B] hover:text-[#C86D51] transition-colors">
                 Back to login
               </Link>
             </p>
@@ -66,29 +66,29 @@ export default function ForgotPassword() {
         ) : (
           <form onSubmit={onSubmit} className="mt-6 space-y-4">
             <div>
-              <label className="text-sm font-medium text-gray-700">Email or mobile number</label>
+              <label className="text-sm font-medium text-[#222222]">Email or mobile number</label>
               <input
                 name="email"
                 placeholder="you@example.com or 98XXXXXXXX"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="mt-1 w-full rounded-lg border border-gray-300 px-3 py-2.5 text-sm outline-none focus:border-emerald-600"
+                className="mt-1 w-full rounded-xl border border-[#EAE5D9] bg-white px-3 py-2.5 text-sm text-[#222222] placeholder:text-[#8E887E] outline-none focus:border-[#C86D51] focus:ring-1 focus:ring-[#C86D51]"
               />
             </div>
 
-            {error && <div className="rounded-lg bg-red-50 px-3 py-2 text-sm font-medium text-red-600">{error}</div>}
+            {error && <div className="rounded-xl bg-red-50 px-3 py-2 text-sm font-medium text-red-600 border border-red-200">{error}</div>}
 
             <button
               disabled={pending || !email.trim()}
               type="submit"
-              className="w-full rounded-lg bg-emerald-600 py-3 font-semibold text-white hover:bg-emerald-700 disabled:opacity-60"
+              className="w-full rounded-xl bg-[#C86D51] py-3 font-semibold text-white shadow-sm hover:bg-[#B55B3F] transition-colors disabled:opacity-60"
             >
               {pending ? "Sending..." : "Send reset link"}
             </button>
 
-            <p className="text-center text-sm text-gray-500">
+            <p className="text-center text-sm text-[#8E887E]">
               Remembered it?{" "}
-              <Link to="/login" className="font-semibold text-emerald-700 hover:underline">
+              <Link to="/login" className="font-semibold text-[#2C5E3B] hover:text-[#C86D51] transition-colors">
                 Login
               </Link>
             </p>

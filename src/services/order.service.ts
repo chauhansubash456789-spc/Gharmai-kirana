@@ -13,7 +13,7 @@ export interface PlaceOrderInput {
   phone?: string;
   addressLine?: string;
   landmark?: string;
-  paymentMethod: "cod" | "qr" | "esewa";
+  paymentMethod: "cod" | "qr" | "esewa" | "khalti";
   couponCode?: string;
   notes?: string;
 }
@@ -56,6 +56,17 @@ export async function placeOrder(userId: number, input: PlaceOrderInput): Promis
     return { ok: false as const, error: "Some items in your cart are no longer available." };
   }
 
+  // Ensure requested quantity does not exceed stock (no silent clamping)
+  for (const reqItem of data.lines) {
+    const preview = lines.find((l) => l.productId === reqItem.id);
+    if (!preview || preview.stock < reqItem.qty) {
+      return {
+        ok: false as const,
+        error: `${preview ? preview.name : "Item"} — only ${preview ? preview.stock : 0} left in stock (you requested ${reqItem.qty}).`,
+      };
+    }
+  }
+
   const totals = await getOrderTotals(lines, data.zoneId, data.couponCode);
 
   let address: DeliveryAddress | null = null;
@@ -91,69 +102,76 @@ export async function placeOrder(userId: number, input: PlaceOrderInput): Promis
 
   const orderNumber = await uniqueOrderNumber();
 
-  const result = await prisma.$transaction(async (tx) => {
-    const products = await tx.product.findMany({
-      where: { id: { in: lines.map((l) => l.productId) } },
-    });
-    for (const line of lines) {
-      const p = products.find((pr) => pr.id === line.productId)!;
-      if (p.stock < line.qty) {
-        throw new Error(`${p.name} — only ${p.stock} left in stock.`);
+  try {
+    const result = await prisma.$transaction(async (tx) => {
+      const products = await tx.product.findMany({
+        where: { id: { in: lines.map((l) => l.productId) } },
+      });
+      for (const line of lines) {
+        const p = products.find((pr) => pr.id === line.productId);
+        if (!p || p.stock < line.qty) {
+          throw new Error(`${p ? p.name : "Product"} — only ${p ? p.stock : 0} left in stock.`);
+        }
       }
-    }
 
-    const order = await tx.order.create({
-      data: {
-        orderNumber,
-        userId,
-        customerName: address.recipientName,
-        customerPhone: address.phone,
-        deliveryLabel: address.label,
-        addressLine: address.addressLine,
-        landmark: address.landmark,
-        deliveryZoneName: zone?.name ?? null,
-        deliveryFee: totals.deliveryFee,
-        itemsSubtotal: totals.subtotal,
-        discountAmount: totals.discount,
-        total: totals.total,
-        paymentMethod: data.paymentMethod,
-        notes: data.notes || null,
-        items: {
-          create: lines.map((l) => ({
-            productId: l.productId,
-            productName: l.name,
-            unit: l.unit,
-            price: l.price,
-            qty: l.qty,
-            subtotal: l.lineTotal,
-          })),
+      const order = await tx.order.create({
+        data: {
+          orderNumber,
+          userId,
+          customerName: address.recipientName,
+          customerPhone: address.phone,
+          deliveryLabel: address.label,
+          addressLine: address.addressLine,
+          landmark: address.landmark,
+          deliveryZoneName: zone?.name ?? null,
+          deliveryFee: totals.deliveryFee,
+          itemsSubtotal: totals.subtotal,
+          discountAmount: totals.discount,
+          total: totals.total,
+          paymentMethod: data.paymentMethod,
+          notes: data.notes || null,
+          items: {
+            create: lines.map((l) => ({
+              productId: l.productId,
+              productName: l.name,
+              unit: l.unit,
+              price: l.price,
+              qty: l.qty,
+              subtotal: l.lineTotal,
+            })),
+          },
         },
-      },
-      include: { items: true },
+        include: { items: true },
+      });
+
+      for (const line of lines) {
+        await tx.product.update({
+          where: { id: line.productId },
+          data: { stock: { decrement: line.qty } },
+        });
+      }
+
+      if (usedCoupon) {
+        await tx.coupon.update({
+          where: { id: usedCoupon.id },
+          data: { usedCount: { increment: 1 } },
+        });
+      }
+
+      return order;
     });
 
-    for (const line of lines) {
-      await tx.product.update({
-        where: { id: line.productId },
-        data: { stock: { decrement: line.qty } },
-      });
-    }
-
-    if (usedCoupon) {
-      await tx.coupon.update({
-        where: { id: usedCoupon.id },
-        data: { usedCount: { increment: 1 } },
-      });
-    }
-
-    return order;
-  });
-
-  return {
-    ok: true as const,
-    orderId: result.id,
-    ...(data.paymentMethod === "esewa" ? { esewa: esewaFormForOrder(result) } : {}),
-  };
+    return {
+      ok: true as const,
+      orderId: result.id,
+      ...(data.paymentMethod === "esewa" ? { esewa: esewaFormForOrder(result) } : {}),
+    };
+  } catch (err) {
+    return {
+      ok: false as const,
+      error: (err as Error).message || "Order placement failed.",
+    };
+  }
 }
 
 export async function updateOrderStatus(
@@ -207,10 +225,45 @@ export async function listOrdersForUser(userId: number, limit = 30) {
 }
 
 export async function getOrderForUser(userId: number, id: number) {
-  return prisma.order.findFirst({
+  const order = await prisma.order.findFirst({
     where: { id, userId },
     include: { items: true },
   });
+  if (!order) return null;
+
+  let deliveryPerson: { name: string; phone: string; vehicleType?: string | null } | null = null;
+  if (order.deliveryBoyId) {
+    const driver = await prisma.user.findFirst({
+      where: { id: order.deliveryBoyId },
+      select: { name: true, phone: true, vehicleType: true },
+    });
+    if (driver) {
+      deliveryPerson = driver;
+    }
+  } else if (order.assignedTo) {
+    deliveryPerson = {
+      name: order.assignedTo,
+      phone: "9800000000",
+      vehicleType: "Motorcycle",
+    };
+  }
+
+  return {
+    ...order,
+    deliveryPerson,
+  };
+}
+
+export async function deleteOrderForUser(userId: number, id: number): Promise<{ ok: boolean; error?: string }> {
+  const order = await prisma.order.findFirst({ where: { id, userId } });
+  if (!order) return { ok: false, error: "Order not found." };
+  if (order.status !== "delivered" && order.status !== "cancelled") {
+    return { ok: false, error: "Only delivered or cancelled orders can be deleted." };
+  }
+
+  await prisma.orderItem.deleteMany({ where: { orderId: id } });
+  await prisma.order.delete({ where: { id } });
+  return { ok: true };
 }
 
 export async function getOrderForAdmin(id: number) {

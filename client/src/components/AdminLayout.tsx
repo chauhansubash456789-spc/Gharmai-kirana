@@ -10,6 +10,7 @@ import {
   Tags,
   Users,
   Bike,
+  Settings,
   LogOut,
 } from "lucide-react";
 
@@ -23,6 +24,7 @@ const links = [
   { to: "/admin/categories", label: "Categories", icon: Tags },
   { to: "/admin/customers", label: "Customers", icon: Users },
   { to: "/admin/drivers", label: "Delivery Staff", icon: Bike },
+  { to: "/admin/settings", label: "Store Settings", icon: Settings },
 ];
 
 export default function AdminLayout() {

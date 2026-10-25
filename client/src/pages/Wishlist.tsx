@@ -24,14 +24,14 @@ export default function Wishlist() {
 
   return (
     <div className="mx-auto max-w-6xl px-4 py-8">
-      <h1 className="text-2xl font-bold text-gray-900">Your Wishlist</h1>
-      <p className="mt-1 text-sm text-gray-500">{list.length} saved products</p>
+      <h1 className="font-serif text-2xl md:text-3xl font-bold text-[#222222]">Your Wishlist</h1>
+      <p className="mt-1 text-sm text-[#8E887E]">{list.length} saved products</p>
 
       {list.length === 0 ? (
         <div className="mt-10">
           <EmptyBox emoji="🤍" message="No saved products yet. Tap the heart on any product to save it." />
           <div className="text-center">
-            <Link to="/search" className="mt-4 inline-block rounded-lg bg-emerald-600 px-5 py-2.5 font-semibold text-white">
+            <Link to="/search" className="mt-4 inline-block rounded-xl bg-[#C86D51] px-5 py-2.5 font-semibold text-white shadow-sm hover:bg-[#B55B3F] transition-colors">
               Browse products
             </Link>
           </div>

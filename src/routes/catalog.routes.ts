@@ -8,6 +8,7 @@ import {
 } from "../services/catalog.service";
 import { getProductBySlug } from "../services/product.service";
 import { listZones } from "../services/zone.service";
+import { getAllStoreSettings } from "../services/setting.service";
 
 export const catalogRouter = Router();
 
@@ -49,4 +50,12 @@ catalogRouter.get("/category-exists/:slug", async (req, res) => {
 
 catalogRouter.get("/zones", async (_req, res) => {
   res.json(await listZones());
+});
+
+catalogRouter.get("/config", async (_req, res) => {
+  res.json(await getAllStoreSettings());
+});
+
+catalogRouter.get("/settings", async (_req, res) => {
+  res.json(await getAllStoreSettings());
 });

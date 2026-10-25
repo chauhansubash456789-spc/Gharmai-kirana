@@ -1,11 +1,11 @@
-import { useState } from "react";
+import { useState, useEffect } from "react";
 import type { FormEvent } from "react";
 import { useAsync } from "@/hooks/useAsync";
 import { api } from "@/api/client";
 import { formatNPR } from "@/lib/format";
-import { Plus, Pencil, Trash2, Truck } from "lucide-react";
+import { Plus, Pencil, Trash2, Truck, CheckCircle2, Sparkles, Save } from "lucide-react";
 import { Spinner, ErrorBox } from "@/components/Feedback";
-import type { DeliveryZone } from "@/types";
+import type { DeliveryZone, StoreSettings } from "@/types";
 
 interface ZoneFormState {
   name: string;
@@ -53,11 +53,45 @@ function ZoneFormFields({ form, setForm }: { form: ZoneFormState; setForm: (f: Z
 
 export default function AdminZones() {
   const { data: zones, error, loading, reload } = useAsync<DeliveryZone[]>(() => api.get("/api/admin/zones"));
+  const { data: storeSettings, reload: reloadSettings } = useAsync<StoreSettings>(() => api.get("/api/admin/settings"));
+
+  const [globalThreshold, setGlobalThreshold] = useState<string>("999");
+  const [savingThreshold, setSavingThreshold] = useState(false);
+  const [thresholdSaved, setThresholdSaved] = useState(false);
+
   const [editingId, setEditingId] = useState<number | null>(null);
   const [form, setForm] = useState<ZoneFormState>(empty);
   const [creating, setCreating] = useState(false);
   const [busy, setBusy] = useState(false);
   const [msg, setMsg] = useState("");
+
+  useEffect(() => {
+    if (storeSettings?.freeDeliveryThreshold !== undefined) {
+      setGlobalThreshold(String(storeSettings.freeDeliveryThreshold));
+    }
+  }, [storeSettings]);
+
+  const handleUpdateGlobalThreshold = async () => {
+    const thresholdNum = Number(globalThreshold);
+    if (isNaN(thresholdNum) || thresholdNum < 0) {
+      setMsg("Please enter a valid free delivery threshold amount (0 or greater).");
+      return;
+    }
+    setSavingThreshold(true);
+    setThresholdSaved(false);
+    setMsg("");
+    try {
+      await api.post("/api/admin/settings/free-delivery", { threshold: thresholdNum });
+      setThresholdSaved(true);
+      reload();
+      reloadSettings();
+      setTimeout(() => setThresholdSaved(false), 4000);
+    } catch (err) {
+      setMsg(err instanceof Error ? err.message : "Failed to update free delivery threshold.");
+    } finally {
+      setSavingThreshold(false);
+    }
+  };
 
   const startEdit = (z: DeliveryZone) => {
     setEditingId(z.id);
@@ -86,10 +120,96 @@ export default function AdminZones() {
   if (loading) return <Spinner label="Loading zones..." />;
   if (error || !zones) return <ErrorBox message={error ?? "Could not load zones."} />;
 
+  const parsedThreshold = Number(globalThreshold) || 0;
+
   return (
-    <div className="space-y-5">
-      <div className="flex items-center justify-between">
-        <h1 className="text-2xl font-bold text-gray-900">Delivery Zones</h1>
+    <div className="space-y-6">
+      {/* Storewide Free Delivery Configuration Card */}
+      <div className="overflow-hidden rounded-2xl border-2 border-emerald-500/30 bg-gradient-to-br from-emerald-50/80 via-white to-white p-5 shadow-sm">
+        <div className="flex flex-col gap-3 sm:flex-row sm:items-center sm:justify-between">
+          <div className="flex items-center gap-3">
+            <div className="flex h-11 w-11 items-center justify-center rounded-xl bg-emerald-600 text-white shadow-md shadow-emerald-600/20">
+              <Truck className="h-5 w-5" />
+            </div>
+            <div>
+              <div className="flex items-center gap-2">
+                <span className="inline-flex items-center gap-1 rounded-full bg-emerald-100 px-2 py-0.5 text-xs font-bold text-emerald-800">
+                  <Sparkles className="h-3 w-3" /> Storewide Policy
+                </span>
+                <span className="text-xs text-gray-400">निःशुल्क डेलिभरी सीमा</span>
+              </div>
+              <h2 className="text-base font-bold text-gray-900 sm:text-lg">
+                Free Delivery Above Rs. (Threshold)
+              </h2>
+            </div>
+          </div>
+          <div className="flex items-center gap-2">
+            <span className="text-xs font-semibold text-gray-500">Live Free Shipping:</span>
+            <span className="rounded-lg bg-emerald-100 px-2.5 py-1 text-sm font-extrabold text-emerald-800">
+              {formatNPR(storeSettings?.freeDeliveryThreshold ?? 999)}
+            </span>
+          </div>
+        </div>
+
+        <p className="mt-2 text-xs text-gray-600">
+          वीरगञ्ज महानगरपालिका भित्र सम्पूर्ण अर्डरमा लागु — Enter the order amount above which customers automatically receive free delivery. Saving will sync all delivery zones below, the storefront navbar, and mobile banners.
+        </p>
+
+        {thresholdSaved && (
+          <div className="mt-3 flex items-center gap-2 rounded-lg bg-emerald-100/80 px-3 py-2 text-xs font-semibold text-emerald-900 animate-fadeIn">
+            <CheckCircle2 className="h-4 w-4 text-emerald-600 shrink-0" />
+            Free delivery threshold successfully updated to {formatNPR(parsedThreshold)} across all delivery zones!
+          </div>
+        )}
+
+        <div className="mt-4 flex flex-col gap-3 sm:flex-row sm:items-center">
+          <div className="relative flex max-w-xs flex-1 items-center rounded-xl border-2 border-emerald-300 bg-white shadow-inner focus-within:border-emerald-600 focus-within:ring-2 focus-within:ring-emerald-600/20">
+            <span className="pl-3.5 pr-1.5 font-bold text-gray-500 select-none">रु.</span>
+            <input
+              type="number"
+              min={0}
+              step={1}
+              value={globalThreshold}
+              onChange={(e) => setGlobalThreshold(e.target.value)}
+              placeholder="999"
+              className="w-full bg-transparent py-2.5 pr-3 text-lg font-extrabold text-emerald-950 placeholder-gray-400 focus:outline-none"
+            />
+          </div>
+
+          <div className="flex flex-wrap items-center gap-1.5">
+            {[499, 799, 999, 1499, 1999].map((amt) => (
+              <button
+                key={amt}
+                type="button"
+                onClick={() => setGlobalThreshold(String(amt))}
+                className={`rounded-lg px-2.5 py-1.5 text-xs font-semibold transition-all ${
+                  parsedThreshold === amt
+                    ? "bg-emerald-600 text-white"
+                    : "bg-gray-100 text-gray-700 hover:bg-emerald-100"
+                }`}
+              >
+                रु. {amt}
+              </button>
+            ))}
+          </div>
+
+          <button
+            type="button"
+            onClick={handleUpdateGlobalThreshold}
+            disabled={savingThreshold}
+            className="inline-flex items-center justify-center gap-2 rounded-xl bg-emerald-600 px-4 py-2.5 text-sm font-bold text-white shadow-md shadow-emerald-600/20 hover:bg-emerald-700 active:scale-95 disabled:opacity-60"
+          >
+            <Save className="h-4 w-4" />
+            {savingThreshold ? "Updating..." : "Save Free Delivery Limit"}
+          </button>
+        </div>
+      </div>
+
+      <div className="flex items-center justify-between border-t border-gray-200 pt-4">
+        <div>
+          <h1 className="text-xl font-bold text-gray-900">Birgunj Delivery Zones</h1>
+          <p className="text-xs text-gray-500">Manage individual ward charges and custom per-zone overrides.</p>
+        </div>
         <button
           type="button"
           onClick={() => {
