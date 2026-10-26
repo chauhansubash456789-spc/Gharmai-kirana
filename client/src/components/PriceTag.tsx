@@ -5,7 +5,7 @@ export function PriceTag({ mrp, price, size = "md" }: { mrp: number; price: numb
   return (
     <div>
       {save > 0 && (
-        <div className="text-xs font-semibold text-[#C86D51]">
+        <div className="text-xs font-semibold text-[#D98510]">
           You Save: Rs. {save.toLocaleString("en-IN")}
         </div>
       )}

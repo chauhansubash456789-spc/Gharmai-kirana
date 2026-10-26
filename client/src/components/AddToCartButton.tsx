@@ -46,7 +46,7 @@ export function AddToCartButton({ id, stock }: { id: number; stock: number }) {
     <button
       onClick={() => add(id)}
       type="button"
-      className="inline-flex items-center justify-center gap-1.5 rounded-xl bg-[#C86D51] px-4 py-2 text-sm font-semibold text-white shadow-xs hover:bg-[#B55B3F] transition-all"
+      className="inline-flex items-center justify-center gap-1.5 rounded-xl bg-[#F29C1B] px-4 py-2 text-sm font-bold text-black shadow-xs hover:bg-[#D98510] transition-all"
     >
       <Plus className="h-4 w-4" /> Add
     </button>

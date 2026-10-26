@@ -52,13 +52,13 @@ export default function ForgotPassword() {
                 <summary className="cursor-pointer text-xs font-semibold text-[#8E887E]">
                   Dev mode (SMTP not configured) — reset link
                 </summary>
-                <a href={devLink} className="mt-2 block break-all text-xs font-medium text-[#2C5E3B] hover:text-[#C86D51]">
+                <a href={devLink} className="mt-2 block break-all text-xs font-medium text-[#2C5E3B] hover:text-[#D98510]">
                   {devLink}
                 </a>
               </details>
             )}
             <p className="mt-5 text-center text-sm text-[#8E887E]">
-              <Link to="/login" className="font-semibold text-[#2C5E3B] hover:text-[#C86D51] transition-colors">
+              <Link to="/login" className="font-semibold text-[#2C5E3B] hover:text-[#D98510] transition-colors">
                 Back to login
               </Link>
             </p>
@@ -72,7 +72,7 @@ export default function ForgotPassword() {
                 placeholder="you@example.com or 98XXXXXXXX"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-                className="mt-1 w-full rounded-xl border border-[#EAE5D9] bg-white px-3 py-2.5 text-sm text-[#222222] placeholder:text-[#8E887E] outline-none focus:border-[#C86D51] focus:ring-1 focus:ring-[#C86D51]"
+                className="mt-1 w-full rounded-xl border border-[#EAE5D9] bg-white px-3 py-2.5 text-sm text-[#222222] placeholder:text-[#8E887E] outline-none focus:border-[#F29C1B] focus:ring-1 focus:ring-[#F29C1B]"
               />
             </div>
 
@@ -81,14 +81,14 @@ export default function ForgotPassword() {
             <button
               disabled={pending || !email.trim()}
               type="submit"
-              className="w-full rounded-xl bg-[#C86D51] py-3 font-semibold text-white shadow-sm hover:bg-[#B55B3F] transition-colors disabled:opacity-60"
+              className="w-full rounded-xl bg-[#F29C1B] py-3 font-bold text-black shadow-sm hover:bg-[#D98510] transition-colors disabled:opacity-60"
             >
               {pending ? "Sending..." : "Send reset link"}
             </button>
 
             <p className="text-center text-sm text-[#8E887E]">
               Remembered it?{" "}
-              <Link to="/login" className="font-semibold text-[#2C5E3B] hover:text-[#C86D51] transition-colors">
+              <Link to="/login" className="font-semibold text-[#2C5E3B] hover:text-[#D98510] transition-colors">
                 Login
               </Link>
             </p>

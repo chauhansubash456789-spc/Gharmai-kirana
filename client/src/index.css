@@ -3,9 +3,10 @@
 :root {
   --background: #FDFBF7;
   --foreground: #222222;
-  --primary: #C86D51;
-  --primary-hover: #B55B3F;
-  --primary-light: #F9ECE8;
+  --primary: #F29C1B;
+  --primary-hover: #D98510;
+  --primary-light: #FEF7EC;
+  --primary-foreground: #000000;
   --secondary: #2C5E3B;
   --secondary-hover: #234D30;
   --secondary-light: #EBF2EE;
@@ -13,12 +14,12 @@
   --surface: #FDFBF7;
   --surface-warm: #F7F4EE;
   --border: #EAE5D9;
-  --border-focus: #C86D51;
+  --border-focus: #F29C1B;
   --text-charcoal: #222222;
   --text-muted: #666159;
   --text-light: #8E887E;
-  --badge-amber: #EAA844;
-  --badge-amber-bg: #FDF6E9;
+  --badge-amber: #F29C1B;
+  --badge-amber-bg: #FEF7EC;
   --badge-sage: #8FA89B;
   --badge-sage-bg: #EFF5F2;
   --font-serif: "Lora", Georgia, serif;
@@ -80,15 +81,15 @@ h1, h2, h3, .font-serif-heading {
 }
 
 .bg-terracotta {
-  background-color: #C86D51;
+  background-color: #F29C1B;
 }
 
 .text-terracotta {
-  color: #C86D51;
+  color: #D98510;
 }
 
 .border-terracotta {
-  border-color: #C86D51;
+  border-color: #F29C1B;
 }
 
 .bg-forest {

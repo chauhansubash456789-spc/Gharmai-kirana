@@ -66,7 +66,7 @@ export default function ProductDetail() {
               In stock · {product.stock} available
             </p>
           ) : (
-            <p className="mt-2.5 inline-block rounded-lg bg-[#F9ECE8] border border-[#F2D0C7] px-2.5 py-0.5 text-xs font-semibold text-[#C86D51]">
+            <p className="mt-2.5 inline-block rounded-lg bg-[#FEF7EC] border border-[#FCE4B8] px-2.5 py-0.5 text-xs font-semibold text-[#D98510]">
               Out of stock
             </p>
           )}
@@ -82,7 +82,7 @@ export default function ProductDetail() {
               )}
             </div>
             {save > 0 && (
-              <p className="mt-2 text-sm font-semibold text-[#C86D51]">
+              <p className="mt-2 text-sm font-semibold text-[#D98510]">
                 You Save: Rs. {save.toLocaleString("en-IN")} compared to retail price
               </p>
             )}

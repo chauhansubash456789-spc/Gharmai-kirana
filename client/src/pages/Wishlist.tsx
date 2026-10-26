@@ -31,7 +31,7 @@ export default function Wishlist() {
         <div className="mt-10">
           <EmptyBox emoji="🤍" message="No saved products yet. Tap the heart on any product to save it." />
           <div className="text-center">
-            <Link to="/search" className="mt-4 inline-block rounded-xl bg-[#C86D51] px-5 py-2.5 font-semibold text-white shadow-sm hover:bg-[#B55B3F] transition-colors">
+            <Link to="/search" className="mt-4 inline-block rounded-xl bg-[#F29C1B] px-5 py-2.5 font-bold text-black shadow-sm hover:bg-[#D98510] transition-colors">
               Browse products
             </Link>
           </div>

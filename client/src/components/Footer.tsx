@@ -18,24 +18,24 @@ export function Footer() {
   }, []);
 
   return (
-    <footer className="mt-16 bg-[#1D4028] text-[#EAE5D9] border-t border-[#2C5E3B]">
+    <footer className="mt-16 bg-[#F29C1B] text-black border-t border-[#D98510]">
       <div className="mx-auto max-w-6xl px-4 py-12">
         <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
           <div>
-            <h3 className="text-xl font-bold text-white font-serif tracking-tight">{STORE_NAME}</h3>
-            <p className="mt-2 text-sm leading-relaxed text-[#D2CBBF]">{STORE_TAGLINE}</p>
-            <p className="mt-3 text-sm text-[#8FA89B]">
+            <h3 className="text-xl font-bold text-black font-serif tracking-tight">{STORE_NAME}</h3>
+            <p className="mt-2 text-sm leading-relaxed text-black/85 font-medium">{STORE_TAGLINE}</p>
+            <p className="mt-3 text-sm text-black/75">
               Online grocery delivery in Birgunj at prices lower than local retail shops.
             </p>
           </div>
           <div>
-            <h4 className="text-xs font-bold uppercase tracking-wider text-[#EAA844]">
+            <h4 className="text-xs font-bold uppercase tracking-wider text-black">
               Categories
             </h4>
-            <ul className="mt-3 space-y-2 text-sm">
+            <ul className="mt-3 space-y-2 text-sm text-black/80 font-medium">
               {categories.map((c) => (
                 <li key={c.id}>
-                  <Link to={`/category/${c.slug}`} className="hover:text-white transition-colors">
+                  <Link to={`/category/${c.slug}`} className="hover:text-black hover:underline transition-colors">
                     {c.name}
                   </Link>
                 </li>
@@ -43,22 +43,22 @@ export function Footer() {
             </ul>
           </div>
           <div>
-            <h4 className="text-xs font-bold uppercase tracking-wider text-[#EAA844]">
+            <h4 className="text-xs font-bold uppercase tracking-wider text-black">
               Quick Links
             </h4>
-            <ul className="mt-3 space-y-2 text-sm">
-              <li><Link to="/search" className="hover:text-white transition-colors">All Products</Link></li>
-              <li><Link to="/account/orders" className="hover:text-white transition-colors">My Orders</Link></li>
-              <li><Link to="/wishlist" className="hover:text-white transition-colors">Wishlist</Link></li>
-              <li><Link to="/cart" className="hover:text-white transition-colors">Cart</Link></li>
-              <li><Link to="/login" className="hover:text-white transition-colors">Login / Register</Link></li>
+            <ul className="mt-3 space-y-2 text-sm text-black/80 font-medium">
+              <li><Link to="/search" className="hover:text-black hover:underline transition-colors">All Products</Link></li>
+              <li><Link to="/account/orders" className="hover:text-black hover:underline transition-colors">My Orders</Link></li>
+              <li><Link to="/wishlist" className="hover:text-black hover:underline transition-colors">Wishlist</Link></li>
+              <li><Link to="/cart" className="hover:text-black hover:underline transition-colors">Cart</Link></li>
+              <li><Link to="/login" className="hover:text-black hover:underline transition-colors">Login / Register</Link></li>
             </ul>
           </div>
           <div>
-            <h4 className="text-xs font-bold uppercase tracking-wider text-[#EAA844]">
+            <h4 className="text-xs font-bold uppercase tracking-wider text-black">
               Delivery
             </h4>
-            <ul className="mt-3 space-y-2 text-sm text-[#D2CBBF]">
+            <ul className="mt-3 space-y-2 text-sm text-black/80 font-medium">
               <li>Same day / next day delivery in Birgunj</li>
               <li>Free delivery above {formatNPR(freeDeliveryThreshold)}</li>
               <li>Cash on Delivery &amp; QR payment</li>
@@ -66,7 +66,7 @@ export function Footer() {
             </ul>
           </div>
         </div>
-        <div className="mt-10 border-t border-[#2C5E3B] pt-6 text-center text-xs text-[#8FA89B]">
+        <div className="mt-10 border-t border-black/15 pt-6 text-center text-xs text-black/75 font-medium">
           © {new Date().getFullYear()} {STORE_NAME}, Birgunj, Nepal. All rights reserved.
         </div>
       </div>

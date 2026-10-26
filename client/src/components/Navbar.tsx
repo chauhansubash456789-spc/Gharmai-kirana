@@ -26,7 +26,7 @@ export function Navbar() {
 
   return (
     <header className="sticky top-0 z-40 bg-[#FDFBF7]/95 backdrop-blur-md shadow-xs border-b border-[#EAE5D9]">
-      <div className="bg-[#2C5E3B] px-4 py-1.5 text-center text-xs font-medium text-white flex items-center justify-center gap-2">
+      <div className="bg-[#1C1B18] px-4 py-1.5 text-center text-xs font-semibold text-[#F29C1B] flex items-center justify-center gap-2">
         <span>घरमै किराना, पसलभन्दा सस्तो मूल्यमा।</span>
         <span className="hidden sm:inline opacity-70">•</span>
         <span className="hidden sm:inline">
@@ -43,7 +43,7 @@ export function Navbar() {
           <Menu className="h-6 w-6" />
         </button>
         <Link to="/" className="flex items-center gap-2.5">
-          <span className="grid h-10 w-10 place-items-center rounded-xl bg-[#C86D51] text-xl font-black text-white shadow-xs">
+          <span className="grid h-10 w-10 place-items-center rounded-xl bg-[#F29C1B] text-xl font-black text-black shadow-xs">
             G
           </span>
           <div className="hidden sm:flex flex-col">
@@ -73,7 +73,7 @@ export function Navbar() {
             navigate(v ? `/search?q=${encodeURIComponent(v)}` : "/search");
           }}
         >
-          <div className="flex items-center rounded-xl border border-[#EAE5D9] bg-[#FFFFFF] px-3.5 py-2 shadow-xs transition-colors focus-within:border-[#C86D51]">
+          <div className="flex items-center rounded-xl border border-[#EAE5D9] bg-[#FFFFFF] px-3.5 py-2 shadow-xs transition-colors focus-within:border-[#F29C1B]">
             <Search className="h-4 w-4 text-[#8E887E]" />
             <input
               name="q"
@@ -91,7 +91,7 @@ export function Navbar() {
           >
             <ShoppingCart className="h-6 w-6 text-[#2C5E3B]" />
             {count > 0 && (
-              <span className="absolute -right-1 -top-1 grid h-5 min-w-5 place-items-center rounded-lg bg-[#C86D51] px-1 text-xs font-bold text-white shadow-xs">
+              <span className="absolute -right-1 -top-1 grid h-5 min-w-5 place-items-center rounded-lg bg-[#F29C1B] px-1 text-xs font-bold text-black shadow-xs">
                 {count}
               </span>
             )}
@@ -130,14 +130,14 @@ export function Navbar() {
                     onClick={() => setUserOpen(false)}
                     className="flex items-center gap-2 px-4 py-2 text-sm text-[#222222] hover:bg-[#FDFBF7]"
                   >
-                    <Heart className="h-4 w-4 text-[#C86D51]" /> Wishlist
+                    <Heart className="h-4 w-4 text-[#F29C1B]" /> Wishlist
                   </Link>
                   <button
                     type="button"
                     onClick={() => {
                       void logout().then(() => navigate("/"));
                     }}
-                    className="block w-full px-4 py-2 text-left text-sm text-[#C86D51] hover:bg-[#F9ECE8]"
+                    className="block w-full px-4 py-2 text-left text-sm text-[#D98510] hover:bg-[#FEF7EC]"
                   >
                     Logout
                   </button>
@@ -147,7 +147,7 @@ export function Navbar() {
           ) : (
             <Link
               to="/login"
-              className="rounded-xl bg-[#C86D51] px-4 py-2 text-sm font-semibold text-white shadow-xs hover:bg-[#B55B3F] transition-all"
+              className="rounded-xl bg-[#F29C1B] px-4 py-2 text-sm font-bold text-black shadow-xs hover:bg-[#D98510] transition-all"
             >
               Login
             </Link>
@@ -162,7 +162,7 @@ export function Navbar() {
               key={l.href}
               to={l.href}
               onClick={() => setMenuOpen(false)}
-              className={`block py-2 text-sm font-medium ${isActive(l.href) ? "text-[#C86D51] font-semibold" : "text-[#222222]"}`}
+              className={`block py-2 text-sm font-medium ${isActive(l.href) ? "text-[#D98510] font-semibold" : "text-[#222222]"}`}
             >
               {l.label}
             </Link>

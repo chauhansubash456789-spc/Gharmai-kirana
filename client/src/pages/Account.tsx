@@ -195,7 +195,7 @@ export default function Account() {
               placeholder="Label (Home / Office)"
               value={form.label}
               onChange={(e) => setForm({ ...form, label: e.target.value })}
-              className="rounded-xl border border-[#EAE5D9] bg-white px-3 py-2 text-sm text-[#222222] placeholder:text-[#8E887E] focus:outline-none focus:border-[#C86D51] focus:ring-1 focus:ring-[#C86D51]"
+              className="rounded-xl border border-[#EAE5D9] bg-white px-3 py-2 text-sm text-[#222222] placeholder:text-[#8E887E] focus:outline-none focus:border-[#F29C1B] focus:ring-1 focus:ring-[#F29C1B]"
             />
             <input
               name="recipientName"
@@ -203,7 +203,7 @@ export default function Account() {
               required
               value={form.recipientName}
               onChange={(e) => setForm({ ...form, recipientName: e.target.value })}
-              className="rounded-xl border border-[#EAE5D9] bg-white px-3 py-2 text-sm text-[#222222] placeholder:text-[#8E887E] focus:outline-none focus:border-[#C86D51] focus:ring-1 focus:ring-[#C86D51]"
+              className="rounded-xl border border-[#EAE5D9] bg-white px-3 py-2 text-sm text-[#222222] placeholder:text-[#8E887E] focus:outline-none focus:border-[#F29C1B] focus:ring-1 focus:ring-[#F29C1B]"
             />
             <input
               name="phone"
@@ -211,7 +211,7 @@ export default function Account() {
               required
               value={form.phone}
               onChange={(e) => setForm({ ...form, phone: e.target.value })}
-              className="rounded-xl border border-[#EAE5D9] bg-white px-3 py-2 text-sm text-[#222222] placeholder:text-[#8E887E] focus:outline-none focus:border-[#C86D51] focus:ring-1 focus:ring-[#C86D51]"
+              className="rounded-xl border border-[#EAE5D9] bg-white px-3 py-2 text-sm text-[#222222] placeholder:text-[#8E887E] focus:outline-none focus:border-[#F29C1B] focus:ring-1 focus:ring-[#F29C1B]"
             />
             <LocationPicker
               latitude={form.latitude}
@@ -225,19 +225,19 @@ export default function Account() {
               required
               value={form.addressLine}
               onChange={(e) => setForm({ ...form, addressLine: e.target.value })}
-              className="rounded-xl border border-[#EAE5D9] bg-white px-3 py-2 text-sm text-[#222222] placeholder:text-[#8E887E] focus:outline-none focus:border-[#C86D51] focus:ring-1 focus:ring-[#C86D51] sm:col-span-2"
+              className="rounded-xl border border-[#EAE5D9] bg-white px-3 py-2 text-sm text-[#222222] placeholder:text-[#8E887E] focus:outline-none focus:border-[#F29C1B] focus:ring-1 focus:ring-[#F29C1B] sm:col-span-2"
             />
             <input
               name="landmark"
               placeholder="Landmark (optional)"
               value={form.landmark}
               onChange={(e) => setForm({ ...form, landmark: e.target.value })}
-              className="rounded-xl border border-[#EAE5D9] bg-white px-3 py-2 text-sm text-[#222222] placeholder:text-[#8E887E] focus:outline-none focus:border-[#C86D51] focus:ring-1 focus:ring-[#C86D51] sm:col-span-2"
+              className="rounded-xl border border-[#EAE5D9] bg-white px-3 py-2 text-sm text-[#222222] placeholder:text-[#8E887E] focus:outline-none focus:border-[#F29C1B] focus:ring-1 focus:ring-[#F29C1B] sm:col-span-2"
             />
             <label className="flex items-center gap-2 text-sm text-[#666159] sm:col-span-2">
-              <input type="checkbox" name="isDefault" checked={form.isDefault} onChange={(e) => setForm({ ...form, isDefault: e.target.checked })} className="rounded accent-[#C86D51]" /> Set as default
+              <input type="checkbox" name="isDefault" checked={form.isDefault} onChange={(e) => setForm({ ...form, isDefault: e.target.checked })} className="rounded accent-[#F29C1B]" /> Set as default
             </label>
-            <button type="submit" className="rounded-xl bg-[#C86D51] px-4 py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-[#B55B3F] transition-colors sm:col-span-2">
+            <button type="submit" className="rounded-xl bg-[#F29C1B] px-4 py-2.5 text-sm font-bold text-black shadow-sm hover:bg-[#D98510] transition-colors sm:col-span-2">
               Save Address
             </button>
           </form>

@@ -30,7 +30,7 @@ export function ProductCard({ product }: { product: Product }) {
   };
 
   return (
-    <div className="group flex flex-col rounded-xl border border-[#EAE5D9] bg-white p-3.5 transition-all duration-200 shadow-artisanal hover:border-[#C86D51]/50 hover:shadow-artisanal-hover">
+    <div className="group flex flex-col rounded-xl border border-[#EAE5D9] bg-white p-3.5 transition-all duration-200 shadow-artisanal hover:border-[#F29C1B]/50 hover:shadow-artisanal-hover">
       <Link to={`/product/${product.slug}`} className="flex flex-col">
         <div className="relative overflow-hidden rounded-lg bg-[#F7F4EE]">
           <img

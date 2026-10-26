@@ -33,15 +33,15 @@ export default function Home() {
 
   return (
     <div className="bg-[#FDFBF7] min-h-screen">
-      <section className="bg-gradient-to-br from-[#1D4028] via-[#2C5E3B] to-[#254F32] text-white">
+      <section className="bg-gradient-to-b from-[#F29C1B] via-[#F29C1B] to-[#EDA025] text-black">
         <div className="mx-auto max-w-6xl px-4 py-12 text-center">
-          <span className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-white/15 backdrop-blur-md text-[#EAA844] text-xs font-bold uppercase tracking-wider mb-3.5 border border-white/15">
+          <span className="inline-flex items-center gap-1.5 px-3.5 py-1.5 rounded-xl bg-black/10 backdrop-blur-md text-black text-xs font-bold uppercase tracking-wider mb-3.5 border border-black/10">
             <Truck className="h-3.5 w-3.5" /> Birgunj Doorstep Delivery
           </span>
-          <h1 className="text-3xl font-extrabold sm:text-4xl lg:text-5xl tracking-tight font-serif text-white">
+          <h1 className="text-3xl font-extrabold sm:text-4xl lg:text-5xl tracking-tight font-serif text-black">
             घरमै किराना, पसलभन्दा सस्तो मूल्यमा।
           </h1>
-          <p className="mt-3 text-[#D2CBBF] max-w-2xl mx-auto text-sm sm:text-base font-sans">
+          <p className="mt-3 text-black/80 max-w-2xl mx-auto text-sm sm:text-base font-sans font-medium">
             Buy fresh groceries online in Birgunj — lower prices than local shops, delivered same day to your doorstep.
           </p>
           <form onSubmit={onSubmit} className="mx-auto mt-6 flex max-w-xl items-center gap-2 rounded-xl bg-white p-1.5 shadow-artisanal border border-[#EAE5D9]">
@@ -51,13 +51,13 @@ export default function Home() {
               placeholder="Search rice, dal, mustard oil, spices... / चामल, दाल खोज्नुहोस्"
               className="w-full bg-transparent text-[#222222] outline-none text-sm placeholder:text-[#8E887E]"
             />
-            <button className="rounded-xl bg-[#C86D51] hover:bg-[#B55B3F] px-6 py-2.5 text-sm font-bold text-white shadow-xs transition-all" type="submit">
+            <button className="rounded-xl bg-[#000000] hover:bg-[#222222] px-6 py-2.5 text-sm font-bold text-white shadow-xs transition-all" type="submit">
               Search
             </button>
           </form>
 
           {/* Hero Banner Visual */}
-          <div className="mx-auto mt-8 max-w-3xl overflow-hidden rounded-xl shadow-artisanal border border-white/20">
+          <div className="mx-auto mt-8 max-w-3xl overflow-hidden rounded-xl shadow-artisanal border border-black/10">
             <img
               src="/hero-web-landscape.jpg"
               alt="Gharmai Kirana Fresh Groceries Delivered to Doorstep"
@@ -66,25 +66,25 @@ export default function Home() {
           </div>
 
           <div className="mx-auto mt-8 grid max-w-3xl grid-cols-1 gap-3 text-left sm:grid-cols-3">
-            <div className="flex items-center gap-3 rounded-xl bg-white/10 backdrop-blur-xs px-4 py-3 border border-white/10">
-              <Truck className="h-6 w-6 shrink-0 text-[#EAA844]" />
+            <div className="flex items-center gap-3 rounded-xl bg-black/8 backdrop-blur-xs px-4 py-3 border border-black/10">
+              <Truck className="h-6 w-6 shrink-0 text-black" />
               <div className="text-sm">
-                <p className="font-semibold text-white">Fast Delivery</p>
-                <p className="text-[#D2CBBF] text-xs">Same day in Birgunj • Free above {formatNPR(freeDeliveryThreshold)}</p>
+                <p className="font-bold text-black">Fast Delivery</p>
+                <p className="text-black/75 text-xs font-medium">Same day in Birgunj • Free above {formatNPR(freeDeliveryThreshold)}</p>
               </div>
             </div>
-            <div className="flex items-center gap-3 rounded-xl bg-white/10 backdrop-blur-xs px-4 py-3 border border-white/10">
-              <BadgePercent className="h-6 w-6 shrink-0 text-[#EAA844]" />
+            <div className="flex items-center gap-3 rounded-xl bg-black/8 backdrop-blur-xs px-4 py-3 border border-black/10">
+              <BadgePercent className="h-6 w-6 shrink-0 text-black" />
               <div className="text-sm">
-                <p className="font-semibold text-white">Lower Prices</p>
-                <p className="text-[#D2CBBF] text-xs">See MRP, our price &amp; what you save</p>
+                <p className="font-bold text-black">Lower Prices</p>
+                <p className="text-black/75 text-xs font-medium">See MRP, our price &amp; what you save</p>
               </div>
             </div>
-            <div className="flex items-center gap-3 rounded-xl bg-white/10 backdrop-blur-xs px-4 py-3 border border-white/10">
-              <Wallet className="h-6 w-6 shrink-0 text-[#EAA844]" />
+            <div className="flex items-center gap-3 rounded-xl bg-black/8 backdrop-blur-xs px-4 py-3 border border-black/10">
+              <Wallet className="h-6 w-6 shrink-0 text-black" />
               <div className="text-sm">
-                <p className="font-semibold text-white">COD + QR</p>
-                <p className="text-[#D2CBBF] text-xs">Cash on delivery or eSewa / Khalti</p>
+                <p className="font-bold text-black">COD + QR</p>
+                <p className="text-black/75 text-xs font-medium">Cash on delivery or eSewa / Khalti</p>
               </div>
             </div>
           </div>
@@ -98,7 +98,7 @@ export default function Home() {
             <Link
               key={c.id}
               to={`/category/${c.slug}`}
-              className="group flex flex-col items-center gap-2 rounded-xl border border-[#EAE5D9] bg-white p-3 text-center shadow-artisanal hover:shadow-artisanal-hover hover:border-[#C86D51]/50 transition-all"
+              className="group flex flex-col items-center gap-2 rounded-xl border border-[#EAE5D9] bg-white p-3 text-center shadow-artisanal hover:shadow-artisanal-hover hover:border-[#F29C1B]/50 transition-all"
             >
               <img
                 src={c.image || placeholderImage(c.name, i)}
@@ -112,7 +112,7 @@ export default function Home() {
       </section>
 
       <section className="mx-auto max-w-6xl px-4 pt-10">
-        <div className="rounded-xl border border-[#C4D6CC] bg-[#EFF5F2] px-5 py-4 text-center text-sm font-semibold text-[#2C5E3B] shadow-xs">
+        <div className="rounded-xl border border-[#FCE4B8] bg-[#FEF7EC] px-5 py-4 text-center text-sm font-bold text-[#D98510] shadow-xs">
           🚚 Free delivery on orders above {formatNPR(freeDeliveryThreshold)} within Birgunj — cash on delivery available.
         </div>
       </section>
@@ -157,7 +157,7 @@ function Section({
     <section className="mx-auto max-w-6xl px-4 pt-12">
       <div className="mb-5 flex items-center justify-between">
         <h2 className="text-2xl font-bold font-serif text-[#222222] tracking-tight">{title}</h2>
-        <Link to={href} className="text-sm font-semibold text-[#C86D51] hover:text-[#B55B3F] hover:underline transition-colors">
+        <Link to={href} className="text-sm font-semibold text-[#D98510] hover:text-[#C77908] hover:underline transition-colors">
           View all →
         </Link>
       </div>

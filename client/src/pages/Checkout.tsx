@@ -221,7 +221,7 @@ export default function Checkout() {
       <h1 className="mb-6 text-2xl font-bold font-serif text-[#222222] tracking-tight">Checkout</h1>
 
       {hasUnavailable && (
-        <div className="mb-5 rounded-xl border border-[#F2D0C7] bg-[#F9ECE8] px-4 py-3 text-sm text-[#C86D51] font-medium">
+        <div className="mb-5 rounded-xl border border-[#FCE4B8] bg-[#FEF7EC] px-4 py-3 text-sm text-[#D98510] font-medium">
           Some items in your cart are unavailable. Remove or adjust them before placing your order.
         </div>
       )}
@@ -235,7 +235,7 @@ export default function Checkout() {
                 {addresses.map((a) => (
                   <label
                     key={a.id}
-                    className={`flex cursor-pointer gap-3 rounded-xl border p-3.5 transition-colors ${addressId === String(a.id) ? "border-[#C86D51] bg-[#F9ECE8]" : "border-[#EAE5D9] hover:bg-[#FDFBF7]"}`}
+                    className={`flex cursor-pointer gap-3 rounded-xl border p-3.5 transition-colors ${addressId === String(a.id) ? "border-[#F29C1B] bg-[#FEF7EC]" : "border-[#EAE5D9] hover:bg-[#FDFBF7]"}`}
                   >
                     <input
                       type="radio"
@@ -243,7 +243,7 @@ export default function Checkout() {
                       value={a.id}
                       checked={addressId === String(a.id)}
                       onChange={() => setAddressId(String(a.id))}
-                      className="mt-1 accent-[#C86D51]"
+                      className="mt-1 accent-[#F29C1B]"
                     />
                     <div className="text-sm">
                       <p className="font-semibold text-[#222222]">
@@ -253,7 +253,7 @@ export default function Checkout() {
                     </div>
                   </label>
                 ))}
-                <button type="button" onClick={() => setShowNewAddress(true)} className="text-sm font-semibold text-[#C86D51] hover:underline">
+                <button type="button" onClick={() => setShowNewAddress(true)} className="text-sm font-semibold text-[#D98510] hover:underline">
                   + Add a new address
                 </button>
               </div>
@@ -266,7 +266,7 @@ export default function Checkout() {
                   <input
                     value={newAddress.recipientName}
                     onChange={(e) => setNewAddress({ ...newAddress, recipientName: e.target.value })}
-                    className="mt-1 w-full rounded-xl border border-[#EAE5D9] px-3 py-2 text-sm text-[#222222] focus:border-[#C86D51] outline-none"
+                    className="mt-1 w-full rounded-xl border border-[#EAE5D9] px-3 py-2 text-sm text-[#222222] focus:border-[#F29C1B] outline-none"
                   />
                 </div>
                 <div>
@@ -275,7 +275,7 @@ export default function Checkout() {
                     value={newAddress.phone}
                     onChange={(e) => setNewAddress({ ...newAddress, phone: e.target.value })}
                     placeholder="98XXXXXXXX"
-                    className="mt-1 w-full rounded-xl border border-[#EAE5D9] px-3 py-2 text-sm text-[#222222] focus:border-[#C86D51] outline-none"
+                    className="mt-1 w-full rounded-xl border border-[#EAE5D9] px-3 py-2 text-sm text-[#222222] focus:border-[#F29C1B] outline-none"
                   />
                 </div>
                 <LocationPicker
@@ -289,13 +289,13 @@ export default function Checkout() {
                   <input
                     value={newAddress.addressLine}
                     onChange={(e) => setNewAddress({ ...newAddress, addressLine: e.target.value })}
-                    className="mt-1 w-full rounded-xl border border-[#EAE5D9] px-3 py-2 text-sm text-[#222222] focus:border-[#C86D51] outline-none"
+                    className="mt-1 w-full rounded-xl border border-[#EAE5D9] px-3 py-2 text-sm text-[#222222] focus:border-[#F29C1B] outline-none"
                   />
                   <input
                     value={newAddress.landmark}
                     onChange={(e) => setNewAddress({ ...newAddress, landmark: e.target.value })}
                     placeholder="Nearby landmark (optional)"
-                    className="mt-2 w-full rounded-xl border border-[#EAE5D9] px-3 py-2 text-sm text-[#222222] focus:border-[#C86D51] outline-none"
+                    className="mt-2 w-full rounded-xl border border-[#EAE5D9] px-3 py-2 text-sm text-[#222222] focus:border-[#F29C1B] outline-none"
                   />
                 </div>
                 {addresses.length > 0 && (
@@ -353,7 +353,7 @@ export default function Checkout() {
               ].map((p) => (
                 <label
                   key={p.id}
-                  className={`cursor-pointer rounded-xl border p-3.5 transition-colors ${paymentMethod === p.id ? "border-[#C86D51] bg-[#F9ECE8]" : "border-[#EAE5D9] hover:bg-[#FDFBF7]"}`}
+                  className={`cursor-pointer rounded-xl border p-3.5 transition-colors ${paymentMethod === p.id ? "border-[#F29C1B] bg-[#FEF7EC]" : "border-[#EAE5D9] hover:bg-[#FDFBF7]"}`}
                 >
                   <input
                     type="radio"
@@ -361,7 +361,7 @@ export default function Checkout() {
                     value={p.id}
                     checked={paymentMethod === p.id}
                     onChange={() => setPaymentMethod(p.id)}
-                    className="mr-1 accent-[#C86D51]"
+                    className="mr-1 accent-[#F29C1B]"
                   />
                   <span className="text-sm font-semibold text-[#222222]">{p.name}</span>
                   <p className="mt-0.5 text-xs text-[#666159]">{p.desc}</p>
@@ -412,7 +412,7 @@ export default function Checkout() {
               onChange={(e) => setNotes(e.target.value)}
               placeholder="Order notes (optional)"
               rows={2}
-              className="mt-3 w-full rounded-xl border border-[#EAE5D9] px-3 py-2 text-sm text-[#222222] focus:border-[#C86D51] outline-none"
+              className="mt-3 w-full rounded-xl border border-[#EAE5D9] px-3 py-2 text-sm text-[#222222] focus:border-[#F29C1B] outline-none"
             />
           </section>
         </div>
@@ -456,7 +456,7 @@ export default function Checkout() {
           </div>
 
           {error && (
-            <div className="mt-4 rounded-xl bg-[#F9ECE8] border border-[#F2D0C7] px-3 py-2 text-sm font-medium text-[#C86D51]">{error}</div>
+            <div className="mt-4 rounded-xl bg-[#FEF7EC] border border-[#FCE4B8] px-3 py-2 text-sm font-medium text-[#D98510]">{error}</div>
           )}
 
           <button
@@ -468,7 +468,7 @@ export default function Checkout() {
               (!addressId && !showNewAddress && addresses.length > 0) ||
               (showNewAddress && !validForNewAddress)
             }
-            className="mt-6 flex w-full items-center justify-center gap-2 rounded-xl bg-[#C86D51] py-3.5 font-bold text-white shadow-xs hover:bg-[#B55B3F] transition-all disabled:bg-[#EAE5D9] disabled:text-[#8E887E] disabled:shadow-none"
+            className="mt-6 flex w-full items-center justify-center gap-2 rounded-xl bg-[#F29C1B] py-3.5 font-bold text-black shadow-xs hover:bg-[#D98510] transition-all disabled:bg-[#EAE5D9] disabled:text-[#8E887E] disabled:shadow-none"
           >
             {submitting ? <><Loader2 className="h-4 w-4 animate-spin" /> Placing order...</> : paymentMethod === "esewa" ? `Pay with eSewa · ${formatNPR(totals.total)}` : `Place Order · ${formatNPR(totals.total)}`}
           </button>

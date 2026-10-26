@@ -22,7 +22,7 @@ export default function AccountOrders() {
         <div className="mt-6">
           <EmptyBox emoji="📦" message="You haven't placed any orders yet." />
           <div className="text-center">
-            <Link to="/search" className="mt-4 inline-block rounded-xl bg-[#C86D51] px-5 py-2.5 font-semibold text-white shadow-sm hover:bg-[#B55B3F] transition-colors">
+            <Link to="/search" className="mt-4 inline-block rounded-xl bg-[#F29C1B] px-5 py-2.5 font-bold text-black shadow-sm hover:bg-[#D98510] transition-colors">
               Start Shopping
             </Link>
           </div>
@@ -80,7 +80,7 @@ export default function AccountOrders() {
                 <StatusBadge status={o.status} />
                 <p className="mt-1.5 font-bold text-[#2C5E3B]">{formatNPR(o.total)}</p>
                 {o.paymentStatus !== "paid" && o.status !== "cancelled" && (
-                  <span className="mt-2 inline-block rounded-lg bg-[#C86D51] px-3 py-1 text-xs font-bold text-white shadow-xs">
+                  <span className="mt-2 inline-block rounded-lg bg-[#F29C1B] px-3 py-1 text-xs font-bold text-black shadow-xs">
                     Proceed to Pay →
                   </span>
                 )}

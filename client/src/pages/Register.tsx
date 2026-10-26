@@ -54,7 +54,7 @@ export default function Register() {
               placeholder="e.g. Sunil Mahato"
               value={name}
               onChange={(e) => setName(e.target.value)}
-              className="mt-1 w-full rounded-xl border border-[#EAE5D9] px-3.5 py-2.5 text-sm text-[#222222] outline-none focus:border-[#C86D51] transition-colors"
+              className="mt-1 w-full rounded-xl border border-[#EAE5D9] px-3.5 py-2.5 text-sm text-[#222222] outline-none focus:border-[#F29C1B] transition-colors"
             />
             <FieldError errors={fieldErrors.name} />
           </div>
@@ -66,7 +66,7 @@ export default function Register() {
               placeholder="98XXXXXXXX"
               value={phone}
               onChange={(e) => setPhone(e.target.value)}
-              className="mt-1 w-full rounded-xl border border-[#EAE5D9] px-3.5 py-2.5 text-sm text-[#222222] outline-none focus:border-[#C86D51] transition-colors"
+              className="mt-1 w-full rounded-xl border border-[#EAE5D9] px-3.5 py-2.5 text-sm text-[#222222] outline-none focus:border-[#F29C1B] transition-colors"
             />
             <FieldError errors={fieldErrors.phone} />
           </div>
@@ -79,7 +79,7 @@ export default function Register() {
               placeholder="you@example.com"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="mt-1 w-full rounded-xl border border-[#EAE5D9] px-3.5 py-2.5 text-sm text-[#222222] outline-none focus:border-[#C86D51] transition-colors"
+              className="mt-1 w-full rounded-xl border border-[#EAE5D9] px-3.5 py-2.5 text-sm text-[#222222] outline-none focus:border-[#F29C1B] transition-colors"
             />
             <FieldError errors={fieldErrors.email} />
           </div>
@@ -91,19 +91,19 @@ export default function Register() {
               placeholder="Minimum 6 characters"
               value={password}
               onChange={(e) => setPassword(e.target.value)}
-              className="mt-1 w-full rounded-xl border border-[#EAE5D9] px-3.5 py-2.5 text-sm text-[#222222] outline-none focus:border-[#C86D51] transition-colors"
+              className="mt-1 w-full rounded-xl border border-[#EAE5D9] px-3.5 py-2.5 text-sm text-[#222222] outline-none focus:border-[#F29C1B] transition-colors"
             />
             <FieldError errors={fieldErrors.password} />
           </div>
 
           {error && (
-            <div className="rounded-xl bg-[#F9ECE8] border border-[#F2D0C7] px-3.5 py-2 text-sm font-medium text-[#C86D51]">{error}</div>
+            <div className="rounded-xl bg-[#FEF7EC] border border-[#FCE4B8] px-3.5 py-2 text-sm font-medium text-[#D98510]">{error}</div>
           )}
 
           <button
             disabled={pending}
             type="submit"
-            className="w-full rounded-xl bg-[#C86D51] py-3 font-bold text-white shadow-xs hover:bg-[#B55B3F] disabled:opacity-60 transition-all"
+            className="w-full rounded-xl bg-[#F29C1B] py-3 font-bold text-black shadow-xs hover:bg-[#D98510] disabled:opacity-60 transition-all"
           >
             {pending ? "Creating..." : "Create Account"}
           </button>
@@ -111,7 +111,7 @@ export default function Register() {
 
         <p className="mt-5 text-center text-sm text-[#666159]">
           Already have an account?{" "}
-          <Link to="/login" className="font-semibold text-[#C86D51] hover:underline">
+          <Link to="/login" className="font-semibold text-[#D98510] hover:underline">
             Login
           </Link>
         </p>

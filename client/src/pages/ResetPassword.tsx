@@ -41,7 +41,7 @@ export default function ResetPassword() {
           <p className="mt-2 text-sm text-[#666159]">Your password has been reset. You can now login with your new password.</p>
           <Link
             to="/login"
-            className="mt-6 inline-block w-full rounded-xl bg-[#C86D51] py-3 text-center font-semibold text-white shadow-sm hover:bg-[#B55B3F] transition-colors"
+            className="mt-6 inline-block w-full rounded-xl bg-[#F29C1B] py-3 text-center font-bold text-black shadow-sm hover:bg-[#D98510] transition-colors"
           >
             Go to login
           </Link>
@@ -65,7 +65,7 @@ export default function ResetPassword() {
               placeholder="Minimum 6 characters"
               value={newPassword}
               onChange={(e) => setNewPassword(e.target.value)}
-              className="mt-1 w-full rounded-xl border border-[#EAE5D9] bg-white px-3 py-2.5 text-sm text-[#222222] placeholder:text-[#8E887E] outline-none focus:border-[#C86D51] focus:ring-1 focus:ring-[#C86D51]"
+              className="mt-1 w-full rounded-xl border border-[#EAE5D9] bg-white px-3 py-2.5 text-sm text-[#222222] placeholder:text-[#8E887E] outline-none focus:border-[#F29C1B] focus:ring-1 focus:ring-[#F29C1B]"
             />
           </div>
           <div>
@@ -76,7 +76,7 @@ export default function ResetPassword() {
               placeholder="Re-enter password"
               value={confirm}
               onChange={(e) => setConfirm(e.target.value)}
-              className="mt-1 w-full rounded-xl border border-[#EAE5D9] bg-white px-3 py-2.5 text-sm text-[#222222] placeholder:text-[#8E887E] outline-none focus:border-[#C86D51] focus:ring-1 focus:ring-[#C86D51]"
+              className="mt-1 w-full rounded-xl border border-[#EAE5D9] bg-white px-3 py-2.5 text-sm text-[#222222] placeholder:text-[#8E887E] outline-none focus:border-[#F29C1B] focus:ring-1 focus:ring-[#F29C1B]"
             />
           </div>
 
@@ -85,7 +85,7 @@ export default function ResetPassword() {
           <button
             disabled={pending}
             type="submit"
-            className="w-full rounded-xl bg-[#C86D51] py-3 font-semibold text-white shadow-sm hover:bg-[#B55B3F] transition-colors disabled:opacity-60"
+            className="w-full rounded-xl bg-[#F29C1B] py-3 font-bold text-black shadow-sm hover:bg-[#D98510] transition-colors disabled:opacity-60"
           >
             {pending ? "Updating..." : "Update password"}
           </button>

@@ -99,7 +99,7 @@ export default function AccountOrderDetail() {
               <button
                 type="button"
                 onClick={() => alert(`Tracking Order #${order.id}\nStatus: Delivered\nDelivered to: ${order.addressLine}\nRider: ${(order as any).deliveryPerson?.name || order.assignedTo || "Ramesh"}`)}
-                className="rounded-lg bg-[#C86D51] px-3.5 py-1.5 text-xs font-bold text-white hover:bg-[#b55b3f] transition"
+                className="rounded-lg bg-[#F29C1B] px-3.5 py-1.5 text-xs font-bold text-black hover:bg-[#D98510] transition"
               >
                 Track Order
               </button>
@@ -139,7 +139,7 @@ export default function AccountOrderDetail() {
           <h1 className="font-serif text-2xl font-bold text-[#222222]">Order {order.orderNumber}</h1>
           <p className="text-sm text-[#8E887E]">Placed on {formatDate(order.createdAt)}</p>
         </div>
-        <Link to="/account/orders" className="text-sm font-semibold text-[#2C5E3B] hover:text-[#C86D51] transition-colors">
+        <Link to="/account/orders" className="text-sm font-semibold text-[#2C5E3B] hover:text-[#D98510] transition-colors">
           ← All orders
         </Link>
       </div>
@@ -173,7 +173,7 @@ export default function AccountOrderDetail() {
             <div className="mt-4 space-y-1.5 border-t border-[#EAE5D9] pt-4 text-sm">
               <div className="flex justify-between text-[#666159]"><span>Subtotal</span><span>{formatNPR(order.itemsSubtotal)}</span></div>
               {order.discountAmount > 0 && (
-                <div className="flex justify-between text-[#C86D51]"><span>Discount</span><span>− {formatNPR(order.discountAmount)}</span></div>
+                <div className="flex justify-between text-[#D98510]"><span>Discount</span><span>− {formatNPR(order.discountAmount)}</span></div>
               )}
               <div className="flex justify-between text-[#666159]"><span>Delivery</span><span>{formatNPR(order.deliveryFee)}</span></div>
               <div className="flex justify-between text-base font-bold text-[#222222]"><span>Total</span><span className="font-bold text-[#2C5E3B]">{formatNPR(order.total)}</span></div>
@@ -216,7 +216,7 @@ export default function AccountOrderDetail() {
                   type="button"
                   disabled={paying}
                   onClick={payWithEsewa}
-                  className="mt-3 w-full rounded-xl bg-[#C86D51] py-2.5 text-sm font-semibold text-white shadow-sm hover:bg-[#B55B3F] transition-colors disabled:opacity-60"
+                  className="mt-3 w-full rounded-xl bg-[#F29C1B] py-2.5 text-sm font-bold text-black shadow-sm hover:bg-[#D98510] transition-colors disabled:opacity-60"
                 >
                   {paying ? "Redirecting to eSewa..." : "Proceed to Pay with eSewa"}
                 </button>

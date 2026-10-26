@@ -51,7 +51,7 @@ export default function Cart() {
         <p className="mt-2 text-sm text-[#666159]">Add groceries and they will show up here.</p>
         <Link
           to="/search"
-          className="mt-6 inline-block rounded-xl bg-[#C86D51] px-6 py-3 font-semibold text-white shadow-sm hover:bg-[#B55B3F] transition-colors"
+          className="mt-6 inline-block rounded-xl bg-[#F29C1B] px-6 py-3 font-bold text-black shadow-sm hover:bg-[#D98510] transition-colors"
         >
           Start Shopping
         </Link>
@@ -93,7 +93,7 @@ export default function Cart() {
       </div>
 
       {hasUnavailable && lines.length > 0 && (
-        <div className="mt-4 rounded-xl border border-[#F2D0C7] bg-[#F9ECE8] px-4 py-3 text-sm text-[#C86D51] font-medium">
+        <div className="mt-4 rounded-xl border border-[#FCE4B8] bg-[#FEF7EC] px-4 py-3 text-sm text-[#D98510] font-medium">
           Some items are no longer available or over their stock limit. Adjust quantities before checkout.
         </div>
       )}
@@ -103,7 +103,7 @@ export default function Cart() {
           {lines.map((l) => (
             <div
               key={l.productId}
-              className={`flex gap-4 rounded-xl border bg-white p-3.5 shadow-artisanal ${l.available ? "border-[#EAE5D9]" : "border-[#F2D0C7]"}`}
+              className={`flex gap-4 rounded-xl border bg-white p-3.5 shadow-artisanal ${l.available ? "border-[#EAE5D9]" : "border-[#FCE4B8]"}`}
             >
               <img
                 src={l.image || placeholderImage(l.name, l.categoryIndex)}
@@ -113,7 +113,7 @@ export default function Cart() {
               <div className="flex flex-1 flex-col">
                 <p className="text-sm font-semibold text-[#222222] font-serif">{l.name}</p>
                 <p className="text-xs text-[#666159] mt-0.5">{l.unit}</p>
-                {!l.available && <p className="text-xs font-semibold text-[#C86D51] mt-1">Currently unavailable</p>}
+                {!l.available && <p className="text-xs font-semibold text-[#D98510] mt-1">Currently unavailable</p>}
                 <div className="mt-auto flex items-center justify-between pt-2">
                   <div className="flex items-center rounded-xl border border-[#2C5E3B] bg-white overflow-hidden shadow-xs">
                     <button onClick={() => setQty(l.productId, l.qty - 1)} type="button" className="p-1.5 hover:bg-[#EFF5F2] text-[#2C5E3B]" aria-label="Decrease">
@@ -133,7 +133,7 @@ export default function Cart() {
                   <span className="text-base font-bold text-[#2C5E3B]">{formatNPR(l.lineTotal)}</span>
                 </div>
               </div>
-              <button onClick={() => remove(l.productId)} type="button" className="self-start p-1 text-[#8E887E] hover:text-[#C86D51] transition-colors" aria-label="Remove">
+              <button onClick={() => remove(l.productId)} type="button" className="self-start p-1 text-[#8E887E] hover:text-[#D98510] transition-colors" aria-label="Remove">
                 <Trash2 className="h-4 w-4" />
               </button>
             </div>
@@ -155,13 +155,13 @@ export default function Cart() {
           <Link
             to="/checkout"
             aria-disabled={hasUnavailable}
-            className={`mt-6 flex w-full items-center justify-center gap-2 rounded-xl bg-[#C86D51] py-3 font-bold text-white shadow-xs hover:bg-[#B55B3F] transition-all ${
+            className={`mt-6 flex w-full items-center justify-center gap-2 rounded-xl bg-[#F29C1B] py-3 font-bold text-black shadow-xs hover:bg-[#D98510] transition-all ${
               hasUnavailable ? "pointer-events-none bg-[#EAE5D9] text-[#8E887E] shadow-none" : ""
             }`}
           >
             Proceed to Checkout <ArrowRight className="h-4 w-4" />
           </Link>
-          <Link to="/search" className="mt-3 block text-center text-sm font-semibold text-[#C86D51] hover:underline">
+          <Link to="/search" className="mt-3 block text-center text-sm font-semibold text-[#D98510] hover:underline">
             Continue shopping
           </Link>
         </div>

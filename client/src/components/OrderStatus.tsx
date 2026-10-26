@@ -5,7 +5,7 @@ export function StatusBadge({ status }: { status: string }) {
   const colors: Record<string, string> = {
     pending: "bg-[#FDF4E7] text-[#B87A1E] border-[#F3DFBC]",
     confirmed: "bg-[#F4F1EA] text-[#666159] border-[#D4CFC4]",
-    packing: "bg-[#FBF1EC] text-[#C86D51] border-[#E8C5B8]",
+    packing: "bg-[#FEF7EC] text-[#D98510] border-[#FCE4B8]",
     out_for_delivery: "bg-[#EFF5F2] text-[#2C5E3B] border-[#C4D6CC]",
     delivered: "bg-[#EFF5F2] text-[#2C5E3B] border-[#C4D6CC]",
     cancelled: "bg-red-50 text-red-700 border-red-200",

@@ -17,12 +17,12 @@ export default function PaymentFailed() {
         {orderId && (
           <Link
             to={`/account/orders/${orderId}`}
-            className="mt-6 block w-full rounded-xl bg-[#C86D51] py-3 font-semibold text-white shadow-sm hover:bg-[#B55B3F] transition-colors"
+            className="mt-6 block w-full rounded-xl bg-[#F29C1B] py-3 font-bold text-black shadow-sm hover:bg-[#D98510] transition-colors"
           >
             Try payment again
           </Link>
         )}
-        <Link to="/" className="mt-3 block text-sm font-semibold text-[#2C5E3B] hover:text-[#C86D51] transition-colors">
+        <Link to="/" className="mt-3 block text-sm font-semibold text-[#2C5E3B] hover:text-[#D98510] transition-colors">
           Continue shopping
         </Link>
       </div>
