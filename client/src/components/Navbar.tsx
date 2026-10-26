@@ -47,7 +47,7 @@ export function Navbar() {
             G
           </span>
           <div className="hidden sm:flex flex-col">
-            <span className="text-xl font-bold tracking-tight text-[#2C5E3B] leading-none font-serif">
+            <span className="text-xl font-bold tracking-tight text-[#000000] leading-none font-serif">
               Gharmai
             </span>
             <span className="text-[10px] font-semibold text-[#666159] tracking-wider uppercase">
