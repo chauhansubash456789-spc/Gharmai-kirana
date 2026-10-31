@@ -16,7 +16,7 @@ export function useStoreConfig() {
       freeDeliveryThreshold: 999,
       minOrderAmount: 199,
       storeName: "Gharmai Kirana — Birgunj",
-      storePhone: "+977-9800000000",
+      storePhone: "+977-9807281806",
       openHours: "6:00 AM – 9:00 PM",
     }
   );

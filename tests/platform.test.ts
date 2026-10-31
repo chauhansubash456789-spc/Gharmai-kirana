@@ -169,7 +169,7 @@ describe("Gharmai Kirana End-to-End Platform Test Suite", () => {
     customerToken = res.body.token;
     customerUser = res.body.user;
 
-    // Test Duplicate Phone Rejection
+    // Test Duplicate Phone Rejection (exact and with +977 prefix)
     const dupRes = await request("/api/auth/register", {
       method: "POST",
       body: JSON.stringify({
@@ -180,6 +180,41 @@ describe("Gharmai Kirana End-to-End Platform Test Suite", () => {
       }),
     });
     assert.equal(dupRes.status, 409, "Should reject duplicate phone number");
+
+    const dupPhonePrefixRes = await request("/api/auth/register", {
+      method: "POST",
+      body: JSON.stringify({
+        name: "Prefix Duplicate Customer",
+        phone: `+977${testPhone}`,
+        email: `prefix_${Date.now()}@example.com`,
+        password: "securePassword123",
+      }),
+    });
+    assert.equal(dupPhonePrefixRes.status, 409, "Should reject duplicate phone number with +977 prefix");
+
+    // Test Duplicate Email Rejection (case-insensitive)
+    const testEmail = `dup_test_${Date.now()}@example.com`;
+    const dupEmailRes = await request("/api/auth/register", {
+      method: "POST",
+      body: JSON.stringify({
+        name: "Email Duplicate Customer",
+        phone: `98${Math.floor(10000000 + Math.random() * 90000000)}`,
+        email: testEmail.toUpperCase(),
+        password: "securePassword123",
+      }),
+    });
+    assert.equal(dupEmailRes.status, 201);
+
+    const dupEmailAgainRes = await request("/api/auth/register", {
+      method: "POST",
+      body: JSON.stringify({
+        name: "Email Duplicate Customer Attempt 2",
+        phone: `98${Math.floor(10000000 + Math.random() * 90000000)}`,
+        email: testEmail.toLowerCase(),
+        password: "securePassword123",
+      }),
+    });
+    assert.equal(dupEmailAgainRes.status, 409, "Should reject duplicate email even with different casing");
   });
 
   // 3. Customer Login & Authentication

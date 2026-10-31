@@ -1,5 +1,5 @@
 import { createContext, useCallback, useContext, useEffect, useMemo, useState, type ReactNode } from "react";
-import { api } from "@/api/client";
+import { api, setStoredToken } from "@/api/client";
 
 export interface User {
   id: number;
@@ -7,6 +7,11 @@ export interface User {
   phone: string;
   role: "customer" | "admin" | "driver";
   loyaltyPoints: number;
+}
+
+interface AuthResponse {
+  user: User;
+  token?: string;
 }
 
 interface AuthContextValue {
@@ -40,21 +45,28 @@ export function AuthProvider({ children }: { children: ReactNode }) {
   }, [refresh]);
 
   const login = useCallback(async (phone: string, password: string) => {
-    const { user: me } = await api.post<{ user: User }>("/api/auth/login", { phone, password });
-    setUser(me);
-    return me;
+    const res = await api.post<AuthResponse>("/api/auth/login", { phone, password });
+    if (res.token) {
+      setStoredToken(res.token);
+    }
+    setUser(res.user);
+    return res.user;
   }, []);
 
   const register = useCallback(async (name: string, phone: string, email: string, password: string) => {
-    const { user: me } = await api.post<{ user: User }>("/api/auth/register", { name, phone, email, password });
-    setUser(me);
-    return me;
+    const res = await api.post<AuthResponse>("/api/auth/register", { name, phone, email, password });
+    if (res.token) {
+      setStoredToken(res.token);
+    }
+    setUser(res.user);
+    return res.user;
   }, []);
 
   const logout = useCallback(async () => {
     try {
       await api.post("/api/auth/logout");
     } finally {
+      setStoredToken(null);
       setUser(null);
     }
   }, []);

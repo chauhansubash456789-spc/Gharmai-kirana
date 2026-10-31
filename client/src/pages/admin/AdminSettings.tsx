@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import type { FormEvent } from "react";
 import { useAsync } from "@/hooks/useAsync";
+import { setCachedStoreConfig } from "@/hooks/useStoreConfig";
 import { api } from "@/api/client";
 import { formatNPR } from "@/lib/format";
 import { Spinner, ErrorBox } from "@/components/Feedback";
@@ -58,13 +59,16 @@ export default function AdminSettings() {
     }
 
     try {
-      await api.put("/api/admin/settings", {
+      const res = await api.put<{ ok: boolean; settings: StoreSettings }>("/api/admin/settings", {
         freeDeliveryThreshold: thresholdNum,
         minOrderAmount: Number(minOrderAmount) || 0,
         storeName: storeName.trim(),
         storePhone: storePhone.trim(),
         openHours: openHours.trim(),
       });
+      if (res?.settings) {
+        setCachedStoreConfig(res.settings);
+      }
       setSaveSuccess(true);
       reload();
       setTimeout(() => setSaveSuccess(false), 4000);

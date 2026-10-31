@@ -27,7 +27,7 @@ export default function Register() {
     setPending(true);
     try {
       await register(name.trim(), phone.trim(), email.trim(), password);
-      navigate("/account");
+      navigate("/account", { replace: true });
     } catch (err) {
       if (err instanceof ApiError) {
         if (err.fieldErrors) setFieldErrors(err.fieldErrors);

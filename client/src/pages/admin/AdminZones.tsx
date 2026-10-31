@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import type { FormEvent } from "react";
 import { useAsync } from "@/hooks/useAsync";
+import { setCachedStoreConfig } from "@/hooks/useStoreConfig";
 import { api } from "@/api/client";
 import { formatNPR } from "@/lib/format";
 import { Plus, Pencil, Trash2, Truck, CheckCircle2, Sparkles, Save } from "lucide-react";
@@ -81,7 +82,10 @@ export default function AdminZones() {
     setThresholdSaved(false);
     setMsg("");
     try {
-      await api.post("/api/admin/settings/free-delivery", { threshold: thresholdNum });
+      const res = await api.post<{ ok: boolean; freeDeliveryThreshold: number }>("/api/admin/settings/free-delivery", { threshold: thresholdNum });
+      if (res?.freeDeliveryThreshold !== undefined && storeSettings) {
+        setCachedStoreConfig({ ...storeSettings, freeDeliveryThreshold: res.freeDeliveryThreshold });
+      }
       setThresholdSaved(true);
       reload();
       reloadSettings();

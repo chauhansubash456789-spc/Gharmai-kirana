@@ -10,7 +10,7 @@ import { formatNPR } from "@/lib/format";
 export function Navbar() {
   const { count } = useCart();
   const { user, logout } = useAuth();
-  const { freeDeliveryThreshold } = useStoreConfig();
+  const { freeDeliveryThreshold, storeName } = useStoreConfig();
   const location = useLocation();
   const navigate = useNavigate();
   const [menuOpen, setMenuOpen] = useState(false);

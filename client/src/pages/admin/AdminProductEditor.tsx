@@ -68,6 +68,13 @@ export default function AdminProductEditor() {
   const [form, setForm] = useState<FormState>(initial);
 
   useEffect(() => {
+    if (!isEdit && categoriesQuery.data && categoriesQuery.data.length > 0 && form.categoryId === 0) {
+      const defaultId = Number(catParam) || categoriesQuery.data[0].id;
+      setForm((f) => ({ ...f, categoryId: defaultId }));
+    }
+  }, [isEdit, categoriesQuery.data, form.categoryId, catParam]);
+
+  useEffect(() => {
     if (isEdit && productQuery.data) {
       const p = productQuery.data;
       setForm({
@@ -107,20 +114,20 @@ export default function AdminProductEditor() {
     setError("");
     setSaving(true);
     const payload = {
-      name: form.name,
-      sku: form.sku,
+      name: form.name.trim(),
+      sku: form.sku.trim(),
       categoryId: form.categoryId,
-      brand: form.brand || undefined,
-      unit: form.unit,
+      brand: form.brand.trim() || null,
+      unit: form.unit.trim(),
       mrp: form.mrp,
       price: form.price,
       purchasePrice: form.purchasePrice,
       stock: form.stock,
-      image: form.image || undefined,
-      description: form.description || undefined,
-      supplier: form.supplier || undefined,
-      batch: form.batch || undefined,
-      expiryDate: form.expiryDate || undefined,
+      image: form.image.trim() || null,
+      description: form.description.trim() || null,
+      supplier: form.supplier.trim() || null,
+      batch: form.batch.trim() || null,
+      expiryDate: form.expiryDate.trim() || null,
       active: form.active,
       featured: form.featured,
       bestSeller: form.bestSeller,

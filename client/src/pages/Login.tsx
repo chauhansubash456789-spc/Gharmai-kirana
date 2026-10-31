@@ -29,7 +29,7 @@ export default function Login() {
         return;
       }
       const from = (location.state as { from?: string } | null)?.from;
-      navigate(from || "/", { replace: true });
+      navigate(from || "/account", { replace: true });
     } catch (err) {
       if (err instanceof ApiError && err.fieldErrors) {
         setError(Object.values(err.fieldErrors).flat().join(" "));

@@ -18,23 +18,28 @@ export async function createProduct(input: ProductInput) {
   if (!parsed.success) return { error: parsed.error.issues[0]?.message ?? "Invalid data" };
   const d = parsed.data;
 
+  const parsedExpiry =
+    d.expiryDate && !isNaN(new Date(d.expiryDate).getTime())
+      ? new Date(d.expiryDate)
+      : null;
+
   const slug = await uniqueSlug(d.name);
   await prisma.product.create({
     data: {
       name: d.name,
       sku: d.sku,
       categoryId: d.categoryId,
-      brand: d.brand || null,
+      brand: d.brand ?? null,
       unit: d.unit,
       mrp: d.mrp,
       price: d.price,
       purchasePrice: d.purchasePrice,
       stock: d.stock,
-      image: d.image || null,
-      description: d.description || null,
-      supplier: d.supplier || null,
-      batch: d.batch || null,
-      expiryDate: d.expiryDate ? new Date(d.expiryDate) : null,
+      image: d.image ?? null,
+      description: d.description ?? null,
+      supplier: d.supplier ?? null,
+      batch: d.batch ?? null,
+      expiryDate: parsedExpiry,
       active: d.active ?? true,
       featured: d.featured ?? false,
       bestSeller: d.bestSeller ?? false,
@@ -56,23 +61,28 @@ export async function updateProduct(id: number, input: ProductInput) {
       ? await uniqueSlug(d.name)
       : existing.slug;
 
+  const parsedExpiry =
+    d.expiryDate && !isNaN(new Date(d.expiryDate).getTime())
+      ? new Date(d.expiryDate)
+      : null;
+
   await prisma.product.update({
     where: { id },
     data: {
       name: d.name,
       sku: d.sku,
       categoryId: d.categoryId,
-      brand: d.brand || null,
+      brand: d.brand ?? null,
       unit: d.unit,
       mrp: d.mrp,
       price: d.price,
       purchasePrice: d.purchasePrice,
       stock: d.stock,
-      image: d.image || null,
-      description: d.description || null,
-      supplier: d.supplier || null,
-      batch: d.batch || null,
-      expiryDate: d.expiryDate ? new Date(d.expiryDate) : null,
+      image: d.image ?? null,
+      description: d.description ?? null,
+      supplier: d.supplier ?? null,
+      batch: d.batch ?? null,
+      expiryDate: parsedExpiry,
       active: d.active ?? true,
       featured: d.featured ?? false,
       bestSeller: d.bestSeller ?? false,

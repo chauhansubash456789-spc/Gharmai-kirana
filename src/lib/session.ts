@@ -53,7 +53,7 @@ export function sessionCookieOptions() {
     sameSite: "lax" as const,
     secure: process.env.NODE_ENV === "production",
     path: "/",
-    maxAge: 60 * 60 * 24 * 30,
+    maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days in milliseconds
   };
 }
 

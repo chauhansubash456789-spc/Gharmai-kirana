@@ -16,18 +16,36 @@ function toPublicUser(user: { id: number; name: string; phone: string; role: str
 }
 
 authRouter.post("/register", validateBody(registerSchema), async (req, res) => {
-  const { name, phone, email, password } = validatedOf<{ name: string; phone: string; email: string; password: string }>(res);
-  const normalizedEmail = email.trim();
+  const { name, phone, email, password } = validatedOf<{
+    name: string;
+    phone: string;
+    email?: string;
+    password: string;
+  }>(res);
 
-  const existing = await prisma.user.findUnique({ where: { phone } });
-  if (existing) {
-    res.status(409).json({ error: "An account with this mobile number already exists. Please login." });
+  const cleanPhone = phone.trim().replace(/^(\+977|977)/, "");
+  const cleanEmail = email && email.trim() ? email.trim().toLowerCase() : null;
+
+  // 1. Prevent duplicate phone registration
+  const existingPhone = await prisma.user.findFirst({
+    where: { phone: cleanPhone },
+  });
+  if (existingPhone) {
+    res.status(409).json({
+      error: "An account with this mobile number already exists. Please login.",
+      fieldErrors: { phone: ["This mobile number is already registered."] },
+    });
     return;
   }
 
-  if (normalizedEmail) {
-    const emailTaken = await prisma.user.findUnique({ where: { email: normalizedEmail } });
-    if (emailTaken) {
+  // 2. Prevent duplicate email registration (case-insensitive check)
+  if (cleanEmail) {
+    const existingEmail = await prisma.user.findFirst({
+      where: {
+        email: { equals: cleanEmail, mode: "insensitive" },
+      },
+    });
+    if (existingEmail) {
       res.status(409).json({
         error: "An account with this email already exists. Please login or use a different email.",
         fieldErrors: { email: ["This email is already registered."] },
@@ -36,24 +54,54 @@ authRouter.post("/register", validateBody(registerSchema), async (req, res) => {
     }
   }
 
-  const user = await prisma.user.create({
-    data: { name, phone, email: normalizedEmail, passwordHash: await hashPassword(password) },
-  });
+  try {
+    const user = await prisma.user.create({
+      data: {
+        name: name.trim(),
+        phone: cleanPhone,
+        email: cleanEmail,
+        passwordHash: await hashPassword(password),
+      },
+    });
 
-  const token = await signSessionToken(user.id, user.role, user.tokenVersion);
-  res.cookie(SESSION_COOKIE_NAME, token, sessionCookieOptions());
-  res.status(201).json({ user: toPublicUser(user), token });
+    const token = await signSessionToken(user.id, user.role, user.tokenVersion);
+    res.cookie(SESSION_COOKIE_NAME, token, sessionCookieOptions());
+    res.status(201).json({ user: toPublicUser(user), token });
+  } catch (err: any) {
+    if (err?.code === "P2002") {
+      const target = String(err?.meta?.target || "");
+      if (target.includes("phone")) {
+        res.status(409).json({
+          error: "An account with this mobile number already exists. Please login.",
+          fieldErrors: { phone: ["This mobile number is already registered."] },
+        });
+        return;
+      }
+      if (target.includes("email")) {
+        res.status(409).json({
+          error: "An account with this email already exists. Please login or use a different email.",
+          fieldErrors: { email: ["This email is already registered."] },
+        });
+        return;
+      }
+    }
+    throw err;
+  }
 });
 
 authRouter.post("/login", validateBody(loginSchema), async (req, res) => {
   const { phone, password } = validatedOf<{ phone: string; password: string }>(res);
-  const identifier = phone.trim();
+  const rawIdentifier = phone.trim();
+  const cleanPhone = rawIdentifier.replace(/^(\+977|977)/, "");
+  const normalizedEmail = rawIdentifier.toLowerCase();
+
   const user = await prisma.user.findFirst({
     where: {
       OR: [
-        { phone: identifier },
-        { email: identifier },
-        ...(identifier.toLowerCase() === "admin" ? [{ role: "admin" }] : []),
+        { phone: cleanPhone },
+        { phone: rawIdentifier },
+        { email: { equals: normalizedEmail, mode: "insensitive" } },
+        ...(normalizedEmail === "admin" ? [{ role: "admin" }] : []),
       ],
     },
   });

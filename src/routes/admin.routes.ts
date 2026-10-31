@@ -1,5 +1,6 @@
 import { Router } from "express";
 import { z } from "zod";
+import { prisma } from "../lib/prisma";
 import { requireAdmin } from "../middleware/auth";
 import { validateBody, validatedOf } from "../middleware/validate";
 import { ORDER_STATUS_VALUES, PAYMENT_STATUS_VALUES } from "../lib/constants";
@@ -51,6 +52,30 @@ const restockSchema = z.object({ qty: z.coerce.number().int().positive() });
 /* ---------- Dashboard ---------- */
 adminRouter.get("/dashboard", async (_req, res) => {
   res.json(await getDashboardData());
+});
+
+adminRouter.get("/overview", async (_req, res) => {
+  const data = await getDashboardData();
+  const salesToday = typeof data.cards[0]?.value === "number" ? data.cards[0].value : 0;
+  const ordersToday = typeof data.cards[1]?.value === "number" ? data.cards[1].value : 0;
+  const pendingOrders = typeof data.cards[2]?.value === "number" ? data.cards[2].value : 0;
+  const activeDrivers = await prisma.user.count({ where: { role: "driver", isOnline: true } });
+
+  res.json({
+    salesToday,
+    ordersToday,
+    pendingOrders,
+    lowStockCount: data.lowStock.length,
+    activeDrivers,
+    recentOrders: data.recentOrders.map((o) => ({
+      id: o.id,
+      orderNumber: o.orderNumber,
+      customerName: o.customerName,
+      total: o.total,
+      status: o.status,
+      createdAt: o.createdAt.toISOString(),
+    })),
+  });
 });
 
 /* ---------- Orders ---------- */

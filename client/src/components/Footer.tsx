@@ -8,7 +8,7 @@ import type { Category } from "@/types";
 
 export function Footer() {
   const [categories, setCategories] = useState<Category[]>([]);
-  const { freeDeliveryThreshold } = useStoreConfig();
+  const { freeDeliveryThreshold, storeName, storePhone } = useStoreConfig();
 
   useEffect(() => {
     api
@@ -22,7 +22,7 @@ export function Footer() {
       <div className="mx-auto max-w-6xl px-4 py-12">
         <div className="grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
           <div>
-            <h3 className="text-xl font-bold text-black font-serif tracking-tight">{STORE_NAME}</h3>
+            <h3 className="text-xl font-bold text-black font-serif tracking-tight">{storeName || STORE_NAME}</h3>
             <p className="mt-2 text-sm leading-relaxed text-black/85 font-medium">{STORE_TAGLINE}</p>
             <p className="mt-3 text-sm text-black/75">
               Online grocery delivery in Birgunj at prices lower than local retail shops.
@@ -62,12 +62,12 @@ export function Footer() {
               <li>Same day / next day delivery in Birgunj</li>
               <li>Free delivery above {formatNPR(freeDeliveryThreshold)}</li>
               <li>Cash on Delivery &amp; QR payment</li>
-              <li>WhatsApp: +977 9800000000</li>
+              <li>Phone / WhatsApp: {storePhone || "+977 9800000000"}</li>
             </ul>
           </div>
         </div>
         <div className="mt-10 border-t border-black/15 pt-6 text-center text-xs text-black/75 font-medium">
-          © {new Date().getFullYear()} {STORE_NAME}, Birgunj, Nepal. All rights reserved.
+          © {new Date().getFullYear()} {storeName || STORE_NAME}, Birgunj, Nepal. All rights reserved.
         </div>
       </div>
     </footer>
