@@ -20,7 +20,7 @@ export type OrderStatus = (typeof ORDER_STATUS_VALUES)[number];
 export const PAYMENT_STATUS_VALUES = ["pending", "paid"] as const;
 export type PaymentStatus = (typeof PAYMENT_STATUS_VALUES)[number];
 
-export const PAYMENT_METHOD_VALUES = ["cod", "qr", "esewa"] as const;
+export const PAYMENT_METHOD_VALUES = ["cod", "qr", "esewa", "khalti"] as const;
 export type PaymentMethod = (typeof PAYMENT_METHOD_VALUES)[number];
 
 export const COUPON_TYPE_VALUES = ["flat", "percent"] as const;
@@ -39,8 +39,9 @@ export const STATUS_FLOW = [
 
 export const PAYMENT_METHODS: Record<string, string> = {
   cod: "Cash on Delivery",
-  qr: "QR / Khalti",
+  qr: "QR / Merchant Scan",
   esewa: "eSewa",
+  khalti: "Khalti Wallet / e-Banking",
 };
 
 export const STORE_NAME = "Gharmai Kirana";

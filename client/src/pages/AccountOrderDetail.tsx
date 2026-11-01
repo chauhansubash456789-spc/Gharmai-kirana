@@ -32,6 +32,24 @@ export default function AccountOrderDetail() {
     }
   };
 
+  const payWithKhalti = async () => {
+    if (!order) return;
+    setPaying(true);
+    setPayError("");
+    try {
+      const res = await api.post<{ ok: boolean; payment_url?: string; error?: string }>("/api/payments/khalti/initiate", { orderId: order.id });
+      if (res.ok && res.payment_url) {
+        window.location.href = res.payment_url;
+      } else {
+        setPayError(res.error || "Could not start Khalti payment.");
+      }
+    } catch (err) {
+      setPayError(err instanceof ApiError ? err.message : "Could not start Khalti payment.");
+    } finally {
+      setPaying(false);
+    }
+  };
+
   if (loading) return <Spinner label="Loading order..." />;
   if (error || !order) {
     return (
@@ -223,7 +241,20 @@ export default function AccountOrderDetail() {
                 {payError && <p className="mt-2 text-xs font-medium text-red-600">{payError}</p>}
               </>
             )}
-            {(order.paymentMethod === "qr" || order.paymentMethod === "khalti") && order.paymentStatus !== "paid" && order.status !== "cancelled" && (
+            {order.paymentMethod === "khalti" && order.paymentStatus !== "paid" && order.status !== "cancelled" && (
+              <>
+                <button
+                  type="button"
+                  disabled={paying}
+                  onClick={payWithKhalti}
+                  className="mt-3 w-full rounded-xl bg-[#5C2D91] py-2.5 text-sm font-bold text-white shadow-sm hover:bg-[#4a2475] transition-colors disabled:opacity-60"
+                >
+                  {paying ? "Redirecting to Khalti..." : "Proceed to Pay with Khalti"}
+                </button>
+                {payError && <p className="mt-2 text-xs font-medium text-red-600">{payError}</p>}
+              </>
+            )}
+            {order.paymentMethod === "qr" && order.paymentStatus !== "paid" && order.status !== "cancelled" && (
               <div className="mt-3">
                 <MerchantQr amount={order.total} />
               </div>

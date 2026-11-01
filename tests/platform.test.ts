@@ -451,6 +451,39 @@ describe("Gharmai Kirana End-to-End Platform Test Suite", () => {
     });
   });
 
+  it("POST /api/checkout with paymentMethod='khalti' should initiate Khalti ePayment and return pidx and payment_url", async () => {
+    const res = await request("/api/checkout", {
+      method: "POST",
+      headers: { Authorization: `Bearer ${customerToken}` },
+      body: JSON.stringify({
+        lines: [{ id: testProductId, qty: 1 }],
+        zoneId: testZoneId,
+        recipientName: "Test Bahadur",
+        phone: "9800000001",
+        addressLine: "Test Address, Birgunj",
+        paymentMethod: "khalti",
+      }),
+    });
+    assert.equal(res.status, 201);
+    assert.equal(res.body.ok, true);
+    assert.ok(res.body.orderId);
+    assert.ok(res.body.payment_url);
+    assert.ok(res.body.khalti?.pidx);
+    assert.ok(res.body.khalti?.payment_url);
+
+    // Verify lookup / verify endpoint reports pending
+    const verifyRes = await request("/api/payments/khalti/verify", {
+      method: "POST",
+      headers: { Authorization: `Bearer ${customerToken}` },
+      body: JSON.stringify({
+        orderId: res.body.orderId,
+        pidx: res.body.khalti.pidx,
+      }),
+    });
+    assert.equal(verifyRes.status, 400);
+    assert.match(verifyRes.body.error, /Khalti payment status is Pending/);
+  });
+
   after(async () => {
     if (server) {
       await new Promise<void>((resolve) => server.close(() => resolve()));

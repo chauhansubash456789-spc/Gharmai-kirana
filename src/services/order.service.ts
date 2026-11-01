@@ -2,7 +2,7 @@ import { prisma } from "../lib/prisma";
 import { ORDER_STATUS_VALUES, PAYMENT_STATUS_VALUES, type OrderStatus, type PaymentStatus } from "../lib/constants";
 import { orderSchema, type OrderInput } from "../validations/order";
 import { generateDeliveryOtp } from "./driver.service";
-import { esewaFormForOrder } from "./payment.service";
+import { esewaFormForOrder, initiateKhaltiOrderPayment } from "./payment.service";
 import { getCheckoutPreview, getOrderTotals, type CartLine, type DeliveryAddress } from "./checkout.service";
 
 export interface PlaceOrderInput {
@@ -19,7 +19,13 @@ export interface PlaceOrderInput {
 }
 
 export type PlaceOrderResult =
-  | { ok: true; orderId: number; esewa?: { formUrl: string; fields: Record<string, string> } }
+  | {
+      ok: true;
+      orderId: number;
+      esewa?: { formUrl: string; fields: Record<string, string> };
+      khalti?: { pidx: string; payment_url: string; expires_at: string };
+      payment_url?: string;
+    }
   | { ok: false; error: string };
 
 export interface AdminOrderFilter {
@@ -161,10 +167,23 @@ export async function placeOrder(userId: number, input: PlaceOrderInput): Promis
       return order;
     });
 
+    let khaltiData: { pidx: string; payment_url: string; expires_at: string } | undefined;
+    if (data.paymentMethod === "khalti") {
+      const khaltiRes = await initiateKhaltiOrderPayment(userId, result.id);
+      if (khaltiRes.ok) {
+        khaltiData = {
+          pidx: khaltiRes.pidx,
+          payment_url: khaltiRes.payment_url,
+          expires_at: khaltiRes.expires_at,
+        };
+      }
+    }
+
     return {
       ok: true as const,
       orderId: result.id,
       ...(data.paymentMethod === "esewa" ? { esewa: esewaFormForOrder(result) } : {}),
+      ...(khaltiData ? { khalti: khaltiData, payment_url: khaltiData.payment_url } : {}),
     };
   } catch (err) {
     return {

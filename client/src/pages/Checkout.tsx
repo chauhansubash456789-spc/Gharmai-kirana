@@ -64,7 +64,7 @@ export default function Checkout() {
       tole: address.tole || prev.tole,
     }));
   };
-  const [paymentMethod, setPaymentMethod] = useState<"cod" | "qr" | "esewa">("cod");
+  const [paymentMethod, setPaymentMethod] = useState<"cod" | "qr" | "esewa" | "khalti">("cod");
   const [couponInput, setCouponInput] = useState("");
   const [notes, setNotes] = useState("");
   const [error, setError] = useState("");
@@ -185,7 +185,14 @@ export default function Checkout() {
     setError("");
     setSubmitting(true);
     try {
-      const res = await api.post<{ ok: boolean; orderId?: number; error?: string; esewa?: EsewaFormPayload }>("/api/checkout", {
+      const res = await api.post<{
+        ok: boolean;
+        orderId?: number;
+        error?: string;
+        payment_url?: string;
+        khalti?: { pidx?: string; payment_url?: string };
+        esewa?: EsewaFormPayload;
+      }>("/api/checkout", {
         lines: items.map((i) => ({ id: i.id, qty: i.qty })),
         zoneId,
         addressId: showNewAddress || !addressId ? undefined : addressId,
@@ -203,6 +210,14 @@ export default function Checkout() {
         if (paymentMethod === "esewa" && res.esewa) {
           submitEsewaForm(res.esewa);
           return;
+        }
+        if (paymentMethod === "khalti") {
+          const redirectUrl = res.payment_url || res.khalti?.payment_url;
+          if (redirectUrl) {
+            clear();
+            window.location.href = redirectUrl;
+            return;
+          }
         }
         clear();
         navigate(`/account/orders/${res.orderId}?placed=1`);
@@ -345,11 +360,12 @@ export default function Checkout() {
 
           <section className="rounded-xl border border-[#EAE5D9] bg-white p-5 shadow-artisanal">
             <h2 className="text-base font-bold font-serif text-[#222222]">3. Payment Method</h2>
-            <div className="mt-3 grid gap-2 sm:grid-cols-3">
+            <div className="mt-3 grid gap-2 sm:grid-cols-2 lg:grid-cols-4">
               {[
                 { id: "cod" as const, name: "Cash on Delivery", desc: "Pay cash when your order arrives" },
+                { id: "khalti" as const, name: "Khalti", desc: "Pay instantly with Khalti Wallet or e-Banking" },
                 { id: "esewa" as const, name: "eSewa", desc: "Pay securely online with your eSewa wallet" },
-                { id: "qr" as const, name: "QR / Khalti", desc: "Pay online before or on delivery" },
+                { id: "qr" as const, name: "QR Payment", desc: "Scan merchant QR to pay" },
               ].map((p) => (
                 <label
                   key={p.id}

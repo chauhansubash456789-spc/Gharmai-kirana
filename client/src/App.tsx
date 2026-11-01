@@ -18,6 +18,7 @@ import ResetPassword from "@/pages/ResetPassword";
 import Account from "@/pages/Account";
 import PaymentSuccess from "@/pages/PaymentSuccess";
 import PaymentFailed from "@/pages/PaymentFailed";
+import KhaltiCallback from "@/pages/KhaltiCallback";
 import AccountOrders from "@/pages/AccountOrders";
 import AccountOrderDetail from "@/pages/AccountOrderDetail";
 
@@ -160,7 +161,8 @@ export default function App() {
       </Route>
 
       <Route path="/payment/success" element={<PaymentSuccess />} />
-        <Route path="/payment/failed" element={<PaymentFailed />} />
+      <Route path="/payment/failed" element={<PaymentFailed />} />
+      <Route path="/payment/khalti/callback" element={<KhaltiCallback />} />
         <Route
         path="/driver"
         element={

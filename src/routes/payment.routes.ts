@@ -1,7 +1,12 @@
 import { Router } from "express";
 import { prisma } from "../lib/prisma";
 import { requireAuth } from "../middleware/auth";
-import { initiateEsewaPayment, verifyEsewaPayment } from "../services/payment.service";
+import {
+  initiateEsewaPayment,
+  verifyEsewaPayment,
+  initiateKhaltiOrderPayment,
+  verifyKhaltiOrderPayment,
+} from "../services/payment.service";
 
 export const paymentRouter = Router();
 
@@ -78,6 +83,40 @@ paymentRouter.post("/esewa/verify", async (req, res) => {
     return;
   }
   const result = await verifyEsewaPayment(userId, orderId, data);
+  if (!result.ok) {
+    res.status(400).json(result);
+    return;
+  }
+  res.json(result);
+});
+
+paymentRouter.post(["/khalti/initiate", "/khalti.init"], async (req, res) => {
+  const userId = Number(res.locals.session?.sub);
+  const orderId = Number(req.body?.orderId);
+  const returnUrl = typeof req.body?.return_url === "string" ? req.body.return_url : undefined;
+
+  if (!Number.isInteger(orderId) || orderId <= 0) {
+    res.status(400).json({ error: "Valid orderId is required." });
+    return;
+  }
+  const result = await initiateKhaltiOrderPayment(userId, orderId, returnUrl);
+  if (!result.ok) {
+    res.status(400).json(result);
+    return;
+  }
+  res.json(result);
+});
+
+paymentRouter.post("/khalti/verify", async (req, res) => {
+  const userId = Number(res.locals.session?.sub);
+  const orderId = Number(req.body?.orderId);
+  const pidx = typeof req.body?.pidx === "string" ? req.body.pidx.trim() : "";
+
+  if (!Number.isInteger(orderId) || orderId <= 0 || !pidx) {
+    res.status(400).json({ error: "orderId and pidx are required." });
+    return;
+  }
+  const result = await verifyKhaltiOrderPayment(userId, orderId, pidx);
   if (!result.ok) {
     res.status(400).json(result);
     return;

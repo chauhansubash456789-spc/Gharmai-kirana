@@ -7,6 +7,7 @@ import {
   esewaConfig,
   verifyEsewaSignature,
 } from "../lib/esewa";
+import { initiateKhalti, lookupKhalti } from "../lib/khalti";
 
 interface EsewaOrderAmounts {
   amount: number;
@@ -92,4 +93,97 @@ export async function verifyEsewaPayment(userId: number, orderId: number, data: 
     data: { paymentStatus: "paid", paymentRef: refId },
   });
   return { ok: true, paymentStatus: "paid", refId };
+}
+
+export type KhaltiInitResult =
+  | { ok: true; pidx: string; payment_url: string; expires_at: string }
+  | { ok: false; error: string };
+
+export async function initiateKhaltiOrderPayment(
+  userId: number,
+  orderId: number,
+  returnUrlOverride?: string
+): Promise<KhaltiInitResult> {
+  const order = await prisma.order.findFirst({ where: { id: orderId, userId } });
+  if (!order) return { ok: false, error: "Order not found." };
+  if (order.paymentStatus === "paid") return { ok: false, error: "This order is already paid." };
+  if (order.status === "cancelled") return { ok: false, error: "This order was cancelled." };
+
+  const base = returnUrlOverride ? new URL(returnUrlOverride).origin : frontendBaseUrl();
+  const returnUrl = returnUrlOverride || `${base}/payment/khalti/callback?orderId=${order.id}`;
+
+  const user = await prisma.user.findUnique({ where: { id: userId } });
+  const amountInPaisa = Math.round(order.total * 100);
+
+  try {
+    const initRes = await initiateKhalti({
+      returnUrl,
+      websiteUrl: base,
+      amountInPaisa,
+      purchaseOrderId: order.orderNumber,
+      purchaseOrderName: `Gharmai Kirana Order ${order.orderNumber}`,
+      customerInfo: {
+        name: order.customerName || user?.name || "Test Bahadur",
+        email: user?.email || "test@khalti.com",
+        phone: order.customerPhone || user?.phone || "9800000001",
+      },
+    });
+
+    await prisma.order.update({
+      where: { id: order.id },
+      data: {
+        paymentRef: initRes.pidx,
+        paymentMethod: "khalti",
+      },
+    });
+
+    return {
+      ok: true,
+      pidx: initRes.pidx,
+      payment_url: initRes.payment_url,
+      expires_at: initRes.expires_at,
+    };
+  } catch (err: any) {
+    return { ok: false, error: err?.message || "Failed to initiate Khalti payment." };
+  }
+}
+
+export type KhaltiVerifyResult =
+  | { ok: true; paymentStatus: string; refId: string | null }
+  | { ok: false; error: string };
+
+export async function verifyKhaltiOrderPayment(
+  userId: number,
+  orderId: number,
+  pidx: string
+): Promise<KhaltiVerifyResult> {
+  const order = await prisma.order.findFirst({ where: { id: orderId, userId } });
+  if (!order) return { ok: false, error: "Order not found." };
+  if (order.paymentStatus === "paid") return { ok: true, paymentStatus: "paid", refId: order.paymentRef };
+
+  try {
+    const lookup = await lookupKhalti(pidx);
+    if (lookup.status !== "Completed") {
+      return { ok: false, error: `Khalti payment status is ${lookup.status}.` };
+    }
+
+    const expectedPaisa = Math.round(order.total * 100);
+    if (lookup.total_amount !== expectedPaisa) {
+      return { ok: false, error: "Paid amount does not match order total." };
+    }
+
+    const refId = lookup.transaction_id || pidx;
+    await prisma.order.update({
+      where: { id: order.id },
+      data: {
+        paymentStatus: "paid",
+        paymentRef: refId,
+        paymentMethod: "khalti",
+      },
+    });
+
+    return { ok: true, paymentStatus: "paid", refId };
+  } catch (err: any) {
+    return { ok: false, error: err?.message || "Could not verify Khalti payment." };
+  }
 }
