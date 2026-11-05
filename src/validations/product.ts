@@ -6,7 +6,7 @@ const nullableString = z
 
 export const productSchema = z.object({
   name: z.string().trim().min(2, "Name is required"),
-  sku: z.string().trim().min(1, "SKU is required"),
+  sku: z.string().trim().optional(),
   categoryId: z.coerce.number().int().positive("Category is required"),
   brand: nullableString.optional(),
   unit: z.string().trim().min(1, "Unit is required"),

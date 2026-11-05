@@ -13,6 +13,17 @@ export async function uniqueSlug(base: string): Promise<string> {
   return candidate;
 }
 
+export async function uniqueSku(base?: string): Promise<string> {
+  const prefix = base ? base.replace(/[^a-zA-Z0-9]/g, "").slice(0, 4).toUpperCase() : "PRD";
+  let candidate = `${prefix || "PRD"}-${Date.now().toString(36).toUpperCase()}`;
+  let n = 1;
+  while (await prisma.product.findUnique({ where: { sku: candidate } })) {
+    candidate = `${prefix || "PRD"}-${Date.now().toString(36).toUpperCase()}-${n}`;
+    n++;
+  }
+  return candidate;
+}
+
 export async function createProduct(input: ProductInput) {
   const parsed = productSchema.safeParse(input);
   if (!parsed.success) return { error: parsed.error.issues[0]?.message ?? "Invalid data" };
@@ -24,10 +35,11 @@ export async function createProduct(input: ProductInput) {
       : null;
 
   const slug = await uniqueSlug(d.name);
+  const sku = d.sku && d.sku.trim().length > 0 ? d.sku.trim() : await uniqueSku(d.name);
   await prisma.product.create({
     data: {
       name: d.name,
-      sku: d.sku,
+      sku,
       categoryId: d.categoryId,
       brand: d.brand ?? null,
       unit: d.unit,
@@ -61,6 +73,8 @@ export async function updateProduct(id: number, input: ProductInput) {
       ? await uniqueSlug(d.name)
       : existing.slug;
 
+  const sku = d.sku && d.sku.trim().length > 0 ? d.sku.trim() : existing.sku;
+
   const parsedExpiry =
     d.expiryDate && !isNaN(new Date(d.expiryDate).getTime())
       ? new Date(d.expiryDate)
@@ -70,7 +84,7 @@ export async function updateProduct(id: number, input: ProductInput) {
     where: { id },
     data: {
       name: d.name,
-      sku: d.sku,
+      sku,
       categoryId: d.categoryId,
       brand: d.brand ?? null,
       unit: d.unit,

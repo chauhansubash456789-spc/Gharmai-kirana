@@ -12,7 +12,7 @@ interface CategoryOption {
 
 type FormState = {
   name: string;
-  sku: string;
+  sku?: string;
   categoryId: number;
   brand: string;
   unit: string;
@@ -115,7 +115,7 @@ export default function AdminProductEditor() {
     setSaving(true);
     const payload = {
       name: form.name.trim(),
-      sku: form.sku.trim(),
+      ...(form.sku?.trim() ? { sku: form.sku.trim() } : {}),
       categoryId: form.categoryId,
       brand: form.brand.trim() || null,
       unit: form.unit.trim(),
@@ -166,10 +166,6 @@ export default function AdminProductEditor() {
             <div className="sm:col-span-2">
               <label className={label}>Product name *</label>
               <input value={form.name} onChange={(e) => set("name", e.target.value)} required className={input} />
-            </div>
-            <div>
-              <label className={label}>SKU *</label>
-              <input value={form.sku} onChange={(e) => set("sku", e.target.value)} required className={input} />
             </div>
             <div>
               <label className={label}>Category *</label>
