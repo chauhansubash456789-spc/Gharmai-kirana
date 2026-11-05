@@ -1,8 +1,50 @@
 import fs from "fs";
 import path from "path";
+import ExcelJS from "exceljs";
 import { prisma } from "../src/lib/prisma";
 import { uniqueSlug, uniqueSku } from "../src/services/product.service";
 import { slugify } from "../src/lib/format";
+
+async function parseXLSX(filePath: string): Promise<Array<Record<string, string>>> {
+  const workbook = new ExcelJS.Workbook();
+  await workbook.xlsx.readFile(filePath);
+  const sheet = workbook.getWorksheet("Products") || workbook.worksheets[0];
+  if (!sheet) return [];
+
+  const headers: string[] = [];
+  const headerRow = sheet.getRow(1);
+  headerRow.eachCell((cell, colNumber) => {
+    const val = String(cell.value || "").toLowerCase().replace(/[^a-z0-9]/g, "");
+    headers[colNumber] = val;
+  });
+
+  const results: Array<Record<string, string>> = [];
+  for (let r = 2; r <= sheet.rowCount; r++) {
+    const row = sheet.getRow(r);
+    let hasValue = false;
+    const rowObj: Record<string, string> = {};
+    headers.forEach((hdr, colNumber) => {
+      if (!hdr) return;
+      const cell = row.getCell(colNumber);
+      let strVal = "";
+      if (cell.value !== null && cell.value !== undefined) {
+        if (typeof cell.value === "object" && "text" in (cell.value as any)) {
+          strVal = String((cell.value as any).text).trim();
+        } else if (cell.value instanceof Date) {
+          strVal = cell.value.toISOString().slice(0, 10);
+        } else {
+          strVal = String(cell.value).trim();
+        }
+      }
+      if (strVal) hasValue = true;
+      rowObj[hdr] = strVal;
+    });
+    if (hasValue && (rowObj.name || rowObj.productname)) {
+      results.push(rowObj);
+    }
+  }
+  return results;
+}
 
 // Simple robust CSV parser handling quotes and commas
 function parseCSV(content: string): Array<Record<string, string>> {
@@ -82,29 +124,35 @@ function parseCSV(content: string): Array<Record<string, string>> {
 }
 
 async function main() {
-  const targetFile =
-    process.argv[2] ||
-    path.resolve(process.cwd(), "products_template.csv") ||
-    path.resolve(process.cwd(), "../products_template.csv");
+  const customTarget = process.argv[2];
+  let filePath = "";
 
-  let filePath = targetFile;
-  if (!fs.existsSync(filePath)) {
-    const altPath = path.resolve(process.cwd(), "../products_template.csv");
-    if (fs.existsSync(altPath)) {
-      filePath = altPath;
-    } else {
-      console.error(`❌ CSV file not found at: ${filePath}`);
-      process.exit(1);
-    }
+  if (customTarget && fs.existsSync(customTarget)) {
+    filePath = path.resolve(customTarget);
+  } else {
+    const candidates = [
+      path.resolve(process.cwd(), "products_template.xlsx"),
+      path.resolve(process.cwd(), "../products_template.xlsx"),
+      path.resolve(process.cwd(), "products_template.csv"),
+      path.resolve(process.cwd(), "../products_template.csv"),
+    ];
+    filePath = candidates.find((p) => fs.existsSync(p)) || "";
+  }
+
+  if (!filePath) {
+    console.error("❌ No products_template.xlsx or products_template.csv found!");
+    process.exit(1);
   }
 
   console.log(`📄 Reading products from: ${filePath}`);
-  const raw = fs.readFileSync(filePath, "utf-8");
-  const rows = parseCSV(raw);
+  const isXLSX = filePath.toLowerCase().endsWith(".xlsx");
+  const rows = isXLSX
+    ? await parseXLSX(filePath)
+    : parseCSV(fs.readFileSync(filePath, "utf-8"));
 
   if (rows.length === 0) {
     console.log("ℹ️ The sheet only contains the header row. No products were found to import.");
-    console.log("👉 Add your product rows below the header row, save the file, and re-run this script!");
+    console.log("👉 Add your product rows below the header row, save the file, and re-run: npm run import:products");
     return;
   }
 
