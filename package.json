@@ -16,6 +16,7 @@
     "db:seed": "tsx prisma/seed.ts",
     "client:dev": "npm --prefix client run dev",
     "client:build": "npm --prefix client run build",
+    "import:products": "tsx scripts/import_products.ts",
     "setup": "npm install && npm --prefix client install && npx prisma db push && npm run db:seed"
   },
   "dependencies": {
